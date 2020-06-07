@@ -49,6 +49,11 @@ public class SudokuControlComponent extends JComponent implements ActionListener
         g.fillRect(0, 0, SudokuWindowDimensions.getControlWidth(), SudokuWindowDimensions.getControlHeight());
     }
     
+    public CellMode getCurrentCellMode()
+    {
+        return m_currentCellMode;
+    }
+    
     public SudokuControlComponent(SudokuBoardComponent boardComponent)
     {
         m_boardComponent = boardComponent;
@@ -91,6 +96,8 @@ public class SudokuControlComponent extends JComponent implements ActionListener
         setCellMode(CellMode.GIVEN);
         setOpaque(true);
         setVisible(true);
+        
+        m_boardComponent.keepFocus();
     }
     
     private void addListeners()
@@ -110,17 +117,20 @@ public class SudokuControlComponent extends JComponent implements ActionListener
         m_BtnClearTopBottom.addActionListener(this);
         
         m_BtnCheckBoard.addActionListener(this);
+        m_ChkKnightConstraint.addActionListener(this);
+        m_ChkKingConstraint.addActionListener(this);
     }
     
     private void setCellMode(CellMode cellMode)
     {
         m_currentCellMode = cellMode;
         
-        m_BtnModeGiven.setBackground((cellMode == CellMode.GIVEN) ? SELECTED_COLOR : NOT_SELECTED_COLOR);
-        m_BtnModeTop.setBackground((cellMode == CellMode.TOP) ? SELECTED_COLOR : NOT_SELECTED_COLOR);
-        m_BtnModeBottom.setBackground((cellMode == CellMode.BOTTOM) ? SELECTED_COLOR : NOT_SELECTED_COLOR);
-        m_BtnModeCenter.setBackground((cellMode == CellMode.CENTER) ? SELECTED_COLOR : NOT_SELECTED_COLOR);
+        m_BtnModeGiven.setBackground((m_currentCellMode == CellMode.GIVEN) ? SELECTED_COLOR : NOT_SELECTED_COLOR);
+        m_BtnModeTop.setBackground((m_currentCellMode == CellMode.TOP) ? SELECTED_COLOR : NOT_SELECTED_COLOR);
+        m_BtnModeBottom.setBackground((m_currentCellMode == CellMode.BOTTOM) ? SELECTED_COLOR : NOT_SELECTED_COLOR);
+        m_BtnModeCenter.setBackground((m_currentCellMode == CellMode.CENTER) ? SELECTED_COLOR : NOT_SELECTED_COLOR);
         repaint();
+        m_boardComponent.keepFocus();
     }
 
     @Override
@@ -138,19 +148,21 @@ public class SudokuControlComponent extends JComponent implements ActionListener
             setCellMode(CellMode.BOTTOM);
         else if (event.getSource() == m_BtnModeCenter)
             setCellMode(CellMode.CENTER);
+        
+        m_boardComponent.keepFocus();
     }
     
     private void importBoard()
     {
         m_boardComponent.importBoard();
         setCellMode(CellMode.CENTER);
+        m_boardComponent.keepFocus();
     }
     
     private void resetBoard()
     {
         m_boardComponent.resetBoard();
         setCellMode(CellMode.GIVEN);
+        m_boardComponent.keepFocus();
     }
-    
-    
 }

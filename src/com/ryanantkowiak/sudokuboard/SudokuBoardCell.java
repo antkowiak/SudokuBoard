@@ -5,15 +5,20 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
-public class SudokuBoardCell extends JPanel
+public class SudokuBoardCell extends JPanel implements MouseListener
 {
     private static final long serialVersionUID = 1L;
+    
+    private SudokuBoardComponent m_boardComponent;
     
     private static Color GIVEN_COLOR = Color.BLACK;
     private static Color PLAYER_COLOR = Color.BLUE;
@@ -119,12 +124,15 @@ public class SudokuBoardCell extends JPanel
         g.drawString(text, x, y);
     }
     
-    public SudokuBoardCell(int x, int y)
+    public SudokuBoardCell(SudokuBoardComponent boardComponent, int x, int y)
     {
+        m_boardComponent = boardComponent;
+        
         setSize(SudokuWindowDimensions.getCellDimension());
         setPreferredSize(SudokuWindowDimensions.getCellDimension());
         setBackground(NOT_HL_BG_COLOR);
         setLocation(SudokuWindowDimensions.getCellPosition(x, y));
+        addMouseListener(this);
         setOpaque(true);
         setVisible(true);
     }
@@ -132,11 +140,18 @@ public class SudokuBoardCell extends JPanel
     public void toggleHighlighted()
     {
         m_isHighlighted = !m_isHighlighted;
+        repaint();
     }
     
     public void setHighlighted(boolean highlighted)
     {
         m_isHighlighted = highlighted;
+        repaint();
+    }
+    
+    public boolean getHighlighted()
+    {
+        return m_isHighlighted;
     }
     
     public void setNumber(CellMode mode, int n)
@@ -177,6 +192,8 @@ public class SudokuBoardCell extends JPanel
                      Collections.sort(m_topNumbers);
                  }
             }
+            
+            repaint();
         }
         
         if (mode == CellMode.BOTTOM && !m_isGiven)
@@ -206,5 +223,56 @@ public class SudokuBoardCell extends JPanel
                 m_centerNumber = n;
             }
         }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent arg0)
+    {    
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent arg0)
+    {
+        if (SwingUtilities.isRightMouseButton(arg0))
+        {
+            if (GlobalMouseState.isDragging)
+            {
+                setHighlighted(GlobalMouseState.isSelecting);
+            }
+        }
+    }
+
+    @Override
+    public void mouseExited(MouseEvent arg0)
+    {
+    }
+
+    @Override
+    public void mousePressed(MouseEvent arg0)
+    {
+        if (SwingUtilities.isRightMouseButton(arg0))
+        {
+            GlobalMouseState.isDragging = true;
+            GlobalMouseState.isSelecting = !m_isHighlighted;
+            toggleHighlighted();
+        }
+        
+        if (SwingUtilities.isLeftMouseButton(arg0))
+        {
+            setHighlighted(true);
+            repaint();
+            m_boardComponent.repaint();
+            GlobalMouseState.isDragging = false;
+            GlobalMouseState.isSelecting = false;
+            
+            m_boardComponent.setHighlightAllCells(false);
+            setHighlighted(true);
+        }
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent arg0)
+    {
+        GlobalMouseState.isDragging = false;
     }
 }
