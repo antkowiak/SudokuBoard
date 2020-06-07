@@ -119,7 +119,8 @@ public class SudokuControlComponent extends JComponent implements ActionListener
         m_BtnModeGiven.setBackground((cellMode == CellMode.GIVEN) ? SELECTED_COLOR : NOT_SELECTED_COLOR);
         m_BtnModeTop.setBackground((cellMode == CellMode.TOP) ? SELECTED_COLOR : NOT_SELECTED_COLOR);
         m_BtnModeBottom.setBackground((cellMode == CellMode.BOTTOM) ? SELECTED_COLOR : NOT_SELECTED_COLOR);
-        m_BtnModeCenter.setBackground((cellMode == CellMode.CENTER) ? SELECTED_COLOR : NOT_SELECTED_COLOR);        
+        m_BtnModeCenter.setBackground((cellMode == CellMode.CENTER) ? SELECTED_COLOR : NOT_SELECTED_COLOR);
+        repaint();
     }
 
     @Override
@@ -142,11 +143,13 @@ public class SudokuControlComponent extends JComponent implements ActionListener
     private void importBoard()
     {
         m_boardComponent.importBoard();
+        setCellMode(CellMode.CENTER);
     }
     
     private void resetBoard()
     {
         m_boardComponent.resetBoard();
+        setCellMode(CellMode.GIVEN);
     }
     
     

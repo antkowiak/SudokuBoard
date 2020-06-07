@@ -78,7 +78,8 @@ public class SudokuBoardComponent extends JComponent
                 for (int x = 0 ; x < 9 ; ++x)
                 {
                     if (inputIdx < input.size())
-                        m_cells[x][y].importGiven(input.get(++inputIdx));
+                        m_cells[x][y].importGiven(input.get(inputIdx));
+                    ++inputIdx;
                     
                     if (inputIdx >= input.size())
                         break;
