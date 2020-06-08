@@ -87,15 +87,25 @@ public class SudokuBoardCell extends JPanel implements MouseListener
             if (!m_topNumbers.isEmpty())
             {
                 g.setColor(TOP_COLOR);
-                drawTopString(g, "123456789", getBounds(), TOP_FONT);
+                drawTopString(g, listToString(m_topNumbers), getBounds(), TOP_FONT);
             }
             
             if (!m_bottomNumbers.isEmpty())
             {
                 g.setColor(BOTTOM_COLOR);
-                drawBottomString(g, "123456789", getBounds(), BOTTOM_FONT);
+                drawBottomString(g, listToString(m_bottomNumbers), getBounds(), BOTTOM_FONT);
             }
         }
+    }
+    
+    private String listToString(List<Integer> data)
+    {
+        String s = "";
+        
+        for (Integer i : data)
+            s += i.toString();
+        
+        return s;
     }
 
     private void drawCenteredString(Graphics g, String text, Rectangle rect, Font font)
@@ -235,9 +245,9 @@ public class SudokuBoardCell extends JPanel implements MouseListener
     {
         if (SwingUtilities.isRightMouseButton(arg0))
         {
-            if (GlobalMouseState.isDragging)
+            if (GlobalState.isDragging)
             {
-                setHighlighted(GlobalMouseState.isSelecting);
+                setHighlighted(GlobalState.isSelecting);
             }
         }
     }
@@ -252,8 +262,8 @@ public class SudokuBoardCell extends JPanel implements MouseListener
     {
         if (SwingUtilities.isRightMouseButton(arg0))
         {
-            GlobalMouseState.isDragging = true;
-            GlobalMouseState.isSelecting = !m_isHighlighted;
+            GlobalState.isDragging = true;
+            GlobalState.isSelecting = !m_isHighlighted;
             toggleHighlighted();
         }
         
@@ -262,8 +272,8 @@ public class SudokuBoardCell extends JPanel implements MouseListener
             setHighlighted(true);
             repaint();
             m_boardComponent.repaint();
-            GlobalMouseState.isDragging = false;
-            GlobalMouseState.isSelecting = false;
+            GlobalState.isDragging = false;
+            GlobalState.isSelecting = false;
             
             m_boardComponent.setHighlightAllCells(false);
             setHighlighted(true);
@@ -273,6 +283,6 @@ public class SudokuBoardCell extends JPanel implements MouseListener
     @Override
     public void mouseReleased(MouseEvent arg0)
     {
-        GlobalMouseState.isDragging = false;
+        GlobalState.isDragging = false;
     }
 }

@@ -18,7 +18,6 @@ public class SudokuControlComponent extends JComponent implements ActionListener
     private static final Color NOT_SELECTED_COLOR = new Color(220, 220, 220);
     
     private SudokuBoardComponent m_boardComponent;
-    private CellMode m_currentCellMode = CellMode.GIVEN;
     
     // import/reset buttons
     private JButton m_BtnImport = new JButton("Import...");
@@ -47,11 +46,6 @@ public class SudokuControlComponent extends JComponent implements ActionListener
         super.paintComponent(g);
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, SudokuWindowDimensions.getControlWidth(), SudokuWindowDimensions.getControlHeight());
-    }
-    
-    public CellMode getCurrentCellMode()
-    {
-        return m_currentCellMode;
     }
     
     public SudokuControlComponent(SudokuBoardComponent boardComponent)
@@ -123,12 +117,12 @@ public class SudokuControlComponent extends JComponent implements ActionListener
     
     private void setCellMode(CellMode cellMode)
     {
-        m_currentCellMode = cellMode;
+        GlobalState.cellMode = cellMode;
         
-        m_BtnModeGiven.setBackground((m_currentCellMode == CellMode.GIVEN) ? SELECTED_COLOR : NOT_SELECTED_COLOR);
-        m_BtnModeTop.setBackground((m_currentCellMode == CellMode.TOP) ? SELECTED_COLOR : NOT_SELECTED_COLOR);
-        m_BtnModeBottom.setBackground((m_currentCellMode == CellMode.BOTTOM) ? SELECTED_COLOR : NOT_SELECTED_COLOR);
-        m_BtnModeCenter.setBackground((m_currentCellMode == CellMode.CENTER) ? SELECTED_COLOR : NOT_SELECTED_COLOR);
+        m_BtnModeGiven.setBackground((cellMode == CellMode.GIVEN) ? SELECTED_COLOR : NOT_SELECTED_COLOR);
+        m_BtnModeTop.setBackground((cellMode == CellMode.TOP) ? SELECTED_COLOR : NOT_SELECTED_COLOR);
+        m_BtnModeBottom.setBackground((cellMode == CellMode.BOTTOM) ? SELECTED_COLOR : NOT_SELECTED_COLOR);
+        m_BtnModeCenter.setBackground((cellMode == CellMode.CENTER) ? SELECTED_COLOR : NOT_SELECTED_COLOR);
         repaint();
         m_boardComponent.keepFocus();
     }

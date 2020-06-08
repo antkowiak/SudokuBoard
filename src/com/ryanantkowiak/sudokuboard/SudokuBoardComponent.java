@@ -133,7 +133,7 @@ public class SudokuBoardComponent extends JComponent implements KeyListener
                 {
                     if (m_cells[x][y].getHighlighted())
                     {
-                        m_cells[x][y].setNumber(CellMode.CENTER, c - '0'); // FIXME - Need to query for cell mode instead
+                        m_cells[x][y].setNumber(GlobalState.cellMode, c - '0'); // FIXME - Need to query for cell mode instead
                     }
                 }
             }
@@ -149,7 +149,7 @@ public class SudokuBoardComponent extends JComponent implements KeyListener
                 {
                     if (m_cells[x][y].getHighlighted())
                     {
-                        m_cells[x][y].setNumber(CellMode.CENTER, 0); // FIXME - Need to query for cell mode instead
+                        m_cells[x][y].setNumber(GlobalState.cellMode, 0); // FIXME - Need to query for cell mode instead
                     }
                 }
             }
