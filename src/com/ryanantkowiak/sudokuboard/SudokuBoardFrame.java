@@ -10,14 +10,11 @@ import javax.swing.JFrame;
 public class SudokuBoardFrame extends JFrame
 {
     private static final long serialVersionUID = 1L;
-
-    private SudokuBoardComponent m_boardComponent;
-    private SudokuControlComponent m_controlComponent;   
     
     private void Init()
     {       
-        m_boardComponent = new SudokuBoardComponent();
-        m_controlComponent = new SudokuControlComponent(m_boardComponent);
+        GlobalState.boardComponent = new SudokuBoardComponent();
+        GlobalState.controlComponent = new SudokuControlComponent();
         
         setTitle("Sudoku Board");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -26,8 +23,8 @@ public class SudokuBoardFrame extends JFrame
 
         getContentPane().setBackground(Color.BLACK);
         getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(m_boardComponent, BorderLayout.CENTER);
-        getContentPane().add(m_controlComponent, BorderLayout.EAST);
+        getContentPane().add(GlobalState.boardComponent, BorderLayout.CENTER);
+        getContentPane().add(GlobalState.controlComponent, BorderLayout.EAST);
         setResizable(false);
         pack();
         

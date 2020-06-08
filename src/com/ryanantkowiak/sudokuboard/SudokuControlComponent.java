@@ -11,14 +11,12 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-public class SudokuControlComponent extends JComponent implements ActionListener
+public class SudokuControlComponent extends JComponent implements ActionListener, SudokuListener
 {
     private static final long serialVersionUID = 1L;
     private static final Color SELECTED_COLOR = new Color(144, 202, 249);
     private static final Color NOT_SELECTED_COLOR = new Color(220, 220, 220);
-    
-    private SudokuBoardComponent m_boardComponent;
-    
+        
     // import/reset buttons
     private JButton m_BtnImport = new JButton("Import...");
     private JButton m_BtnReset = new JButton("Reset");
@@ -40,17 +38,10 @@ public class SudokuControlComponent extends JComponent implements ActionListener
     private JButton m_BtnCheckBoard = new JButton("Check Board");
     private JCheckBox m_ChkKnightConstraint = new JCheckBox("Knight Constraint", false);
     private JCheckBox m_ChkKingConstraint = new JCheckBox("King Constraint", false);
-    
-    protected void paintComponent(Graphics g)
+        
+    public SudokuControlComponent()
     {
-        super.paintComponent(g);
-        g.setColor(Color.WHITE);
-        g.fillRect(0, 0, SudokuWindowDimensions.getControlWidth(), SudokuWindowDimensions.getControlHeight());
-    }
-    
-    public SudokuControlComponent(SudokuBoardComponent boardComponent)
-    {
-        m_boardComponent = boardComponent;
+        GlobalState.addSudokuListener(this);
         
         setSize(SudokuWindowDimensions.getControlDimension());
         setPreferredSize(SudokuWindowDimensions.getControlDimension());
@@ -90,8 +81,13 @@ public class SudokuControlComponent extends JComponent implements ActionListener
         setCellMode(CellMode.GIVEN);
         setOpaque(true);
         setVisible(true);
-        
-        m_boardComponent.keepFocus();
+    }
+    
+    protected void paintComponent(Graphics g)
+    {
+        super.paintComponent(g);
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, SudokuWindowDimensions.getControlWidth(), SudokuWindowDimensions.getControlHeight());
     }
     
     private void addListeners()
@@ -123,40 +119,97 @@ public class SudokuControlComponent extends JComponent implements ActionListener
         m_BtnModeTop.setBackground((cellMode == CellMode.TOP) ? SELECTED_COLOR : NOT_SELECTED_COLOR);
         m_BtnModeBottom.setBackground((cellMode == CellMode.BOTTOM) ? SELECTED_COLOR : NOT_SELECTED_COLOR);
         m_BtnModeCenter.setBackground((cellMode == CellMode.CENTER) ? SELECTED_COLOR : NOT_SELECTED_COLOR);
-        repaint();
-        m_boardComponent.keepFocus();
     }
 
     @Override
     public void actionPerformed(ActionEvent event)
     {
         if (event.getSource() == m_BtnImport)
-            importBoard();
+            GlobalState.fireEventImportButton();
         else if (event.getSource() == m_BtnReset)
-            resetBoard();
+            GlobalState.fireEventResetButton();
         else if (event.getSource() == m_BtnModeGiven)
-            setCellMode(CellMode.GIVEN);
+            GlobalState.fireEventCellModeButton(CellMode.GIVEN);
         else if (event.getSource() == m_BtnModeTop)
-            setCellMode(CellMode.TOP);
+            GlobalState.fireEventCellModeButton(CellMode.TOP);
         else if (event.getSource() == m_BtnModeBottom)
-            setCellMode(CellMode.BOTTOM);
+            GlobalState.fireEventCellModeButton(CellMode.BOTTOM);
         else if (event.getSource() == m_BtnModeCenter)
-            setCellMode(CellMode.CENTER);
+            GlobalState.fireEventCellModeButton(CellMode.CENTER);
         
-        m_boardComponent.keepFocus();
+        GlobalState.fireEventRepaintRequest();
     }
-    
-    private void importBoard()
+
+    @Override
+    public void handleEventImportButton()
     {
-        m_boardComponent.importBoard();
         setCellMode(CellMode.CENTER);
-        m_boardComponent.keepFocus();
     }
-    
-    private void resetBoard()
+
+    @Override
+    public void handleEventResetButton()
     {
-        m_boardComponent.resetBoard();
         setCellMode(CellMode.GIVEN);
-        m_boardComponent.keepFocus();
+    }
+
+    @Override
+    public void handleEventCellModeButton(CellMode newCellMode)
+    {
+        setCellMode(newCellMode);
+    }
+
+    @Override
+    public void handleEventClearTopButton()
+    {
+    }
+
+    @Override
+    public void handleEventClearBottomButton()
+    {
+    }
+
+    @Override
+    public void handleEventClearCenterButton()
+    {
+    }
+
+    @Override
+    public void handleEventClearAllButton()
+    {
+    }
+
+    @Override
+    public void handleEventClearTopBottomButton()
+    {
+    }
+
+    @Override
+    public void handleEventCheckBoardButton()
+    {
+    }
+
+    @Override
+    public void handleEventNumberKeyTyped(int n, boolean forceClear)
+    {
+    }
+
+    @Override
+    public void handleEventLetterKeyTyped(char c)
+    {
+    }
+
+    @Override
+    public void handleRepaintRequest()
+    {
+    }
+
+    @Override
+    public void handleImportCellValue(int x, int y, int n)
+    {
+    }
+
+    @Override
+    public void handleHighlightAllCells(boolean highlighted)
+    {        
     }
 }

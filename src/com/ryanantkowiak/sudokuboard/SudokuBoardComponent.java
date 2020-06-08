@@ -10,13 +10,10 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
-public class SudokuBoardComponent extends JComponent implements KeyListener
+public class SudokuBoardComponent extends JComponent implements KeyListener, SudokuListener
 {
     
     private static final long serialVersionUID = 1L;
-    
-    private SudokuBoardCell [][] m_cells = new SudokuBoardCell[9][9]; 
-    private String m_importedText = "";
     
     protected void paintComponent(Graphics g)
     {
@@ -29,8 +26,8 @@ public class SudokuBoardComponent extends JComponent implements KeyListener
         {
             for (int y = 0 ; y < 9 ; ++y)
             {
-                SudokuBoardCell cell = new SudokuBoardCell(this, x, y);
-                m_cells[x][y] = cell;
+                SudokuBoardCell cell = new SudokuBoardCell(x, y);
+                GlobalState.cells[x][y] = cell;
                 add(cell);
             }
         }
@@ -44,42 +41,52 @@ public class SudokuBoardComponent extends JComponent implements KeyListener
         setBackground(Color.BLACK);
 
         addCells();
-        
+     
+        GlobalState.addSudokuListener(this);
         addKeyListener(this);
     }
-    
-    public void resetBoard()
+   
+    @Override
+    public void keyPressed(KeyEvent arg0)
     {
-        for (int x = 0 ; x < 9 ; ++x)
-            for (int y = 0 ; y < 9 ; ++y)
-                m_cells[x][y].resetCell();
     }
-    
-    public void setHighlightAllCells(boolean highlighted)
+
+    @Override
+    public void keyReleased(KeyEvent arg0)
     {
-        for (int x = 0 ; x < 9 ; ++x)
-            for (int y = 0 ; y < 9 ; ++y)
-                m_cells[x][y].setHighlighted(highlighted);        
     }
-    
-    public void importBoard()
+
+    @Override
+    public void keyTyped(KeyEvent event)
     {
-        m_importedText = JOptionPane.showInputDialog("Import Sudoku Board:", m_importedText);
+        char c = event.getKeyChar();
         
-        if (m_importedText != null && !m_importedText.isEmpty())
-        {
-            resetBoard();
-            
+        if (c >= 0 && c <= '9')
+            GlobalState.fireEventNumberKeyTyped(c - '0');
+
+        else if (c == 'c')
+            GlobalState.fireEventLetterKeyTyped(c);
+
+        repaint();
+
+        // TODO - more keyboard shortcuts       
+    }
+
+    @Override
+    public void handleEventImportButton()
+    {
+        GlobalState.importText = JOptionPane.showInputDialog("Import Sudoku Board:", GlobalState.importText);
+        
+        if (GlobalState.importText != null && !GlobalState.importText.isEmpty())
+        {            
             List<Integer> input = new ArrayList<Integer>();
             
-            for (char c : m_importedText.toCharArray())
+            for (char c : GlobalState.importText.toCharArray())
             {
                 int n = c - '0';
                 
                 if (n >= 0 && n <= 9)
-                {
                     input.add(n);
-                }
             }
             
             int inputIdx = 0;
@@ -89,7 +96,7 @@ public class SudokuBoardComponent extends JComponent implements KeyListener
                 for (int x = 0 ; x < 9 ; ++x)
                 {
                     if (inputIdx < input.size())
-                        m_cells[x][y].importGiven(input.get(inputIdx));
+                        GlobalState.fireEventImportCellValue(x, y, input.get(inputIdx));
                     ++inputIdx;
                     
                     if (inputIdx >= input.size())
@@ -102,64 +109,72 @@ public class SudokuBoardComponent extends JComponent implements KeyListener
         }
     }
 
-    public void keepFocus()
+    @Override
+    public void handleEventResetButton()
     {
+    }
+
+    @Override
+    public void handleEventCellModeButton(CellMode newCellMode)
+    {
+    }
+
+    @Override
+    public void handleEventClearTopButton()
+    {
+    }
+
+    @Override
+    public void handleEventClearBottomButton()
+    {
+    }
+
+    @Override
+    public void handleEventClearCenterButton()
+    {
+    }
+
+    @Override
+    public void handleEventClearAllButton()
+    {
+    }
+
+    @Override
+    public void handleEventClearTopBottomButton()
+    {
+    }
+
+    @Override
+    public void handleEventCheckBoardButton()
+    {
+    }
+
+    @Override
+    public void handleEventNumberKeyTyped(int n, boolean forceClear)
+    {
+    }
+
+    @Override
+    public void handleEventLetterKeyTyped(char c)
+    {
+    }
+
+    @Override
+    public void handleRepaintRequest()
+    {
+        repaint();
         setFocusable(true);
         requestFocus();
     }
-    
+
     @Override
-    public void keyPressed(KeyEvent arg0)
+    public void handleImportCellValue(int x, int y, int n)
     {
-        keepFocus();        
     }
 
     @Override
-    public void keyReleased(KeyEvent arg0)
+    public void handleHighlightAllCells(boolean highlighted)
     {
-        keepFocus();
-    }
-
-    @Override
-    public void keyTyped(KeyEvent arg0)
-    {
-        char c = arg0.getKeyChar();
-        
-        if (c >= 0 && c <= '9')
-        {
-            for (int x = 0 ; x < 9 ; ++x)
-            {
-                for (int y = 0 ; y < 9 ; ++y)
-                {
-                    if (m_cells[x][y].getHighlighted())
-                    {
-                        m_cells[x][y].setNumber(GlobalState.cellMode, c - '0'); // FIXME - Need to query for cell mode instead
-                    }
-                }
-            }
-            
-            repaint();
-        }
-
-        else if (c == 'c' || c == ' ')
-        {
-            for (int x = 0 ; x < 9 ; ++x)
-            {
-                for (int y = 0 ; y < 9 ; ++y)
-                {
-                    if (m_cells[x][y].getHighlighted())
-                    {
-                        m_cells[x][y].setNumber(GlobalState.cellMode, 0); // FIXME - Need to query for cell mode instead
-                    }
-                }
-            }
-            
-            repaint();
-        }
-
-        
-        // TODO
-        keepFocus();       
     }
 
 }
