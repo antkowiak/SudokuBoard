@@ -136,6 +136,16 @@ public class SudokuControlComponent extends JComponent implements ActionListener
             GlobalState.fireEventCellModeButton(CellMode.BOTTOM);
         else if (event.getSource() == m_BtnModeCenter)
             GlobalState.fireEventCellModeButton(CellMode.CENTER);
+        else if (event.getSource() == m_BtnClearTop)
+            GlobalState.fireEventClearTopButton();
+        else if (event.getSource() == m_BtnClearBottom)
+            GlobalState.fireEventClearBottomButton();
+        else if (event.getSource() == m_BtnClearCenter)
+            GlobalState.fireEventClearCenterButton();
+        else if (event.getSource() == m_BtnClearAll)
+            GlobalState.fireEventClearAllButton();
+        else if (event.getSource() == m_BtnClearTopBottom)
+            GlobalState.fireEventClearTopBottomButton();
         
         GlobalState.fireEventRepaintRequest();
     }

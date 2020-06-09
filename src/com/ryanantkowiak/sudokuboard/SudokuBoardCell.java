@@ -314,26 +314,45 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
     @Override
     public void handleEventClearTopButton()
     {
+        if (m_isHighlighted)
+            m_topNumbers.clear();
     }
 
     @Override
     public void handleEventClearBottomButton()
     {
+        if (m_isHighlighted)
+            m_bottomNumbers.clear();
     }
 
     @Override
     public void handleEventClearCenterButton()
     {
+        if (m_isHighlighted && !m_isGiven)
+            m_centerNumber = 0;
     }
 
     @Override
     public void handleEventClearAllButton()
     {
+        if (m_isHighlighted)
+        {
+            m_topNumbers.clear();
+            m_bottomNumbers.clear();
+            
+            if (!m_isGiven)
+                m_centerNumber = 0;
+        }
     }
 
     @Override
     public void handleEventClearTopBottomButton()
     {
+        if (m_isHighlighted)
+        {
+            m_topNumbers.clear();
+            m_bottomNumbers.clear();
+        }
     }
 
     @Override
