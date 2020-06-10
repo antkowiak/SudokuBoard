@@ -161,7 +161,7 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
         repaint();
     }
        
-    private void setNumber(CellMode mode, int n)
+    private void setNumber(CellMode mode, int n, boolean forceClear)
     {
         if (mode == CellMode.GIVEN)
         {
@@ -192,7 +192,7 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
             }
             else if (isValidNumber(n))
             {
-                 if (m_topNumbers.contains(new Integer(n)))
+                 if (m_topNumbers.contains(new Integer(n)) || forceClear)
                  {
                      m_topNumbers.remove(new Integer(n));
                  }
@@ -214,7 +214,7 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
             }
             else if (isValidNumber(n))
             {
-                 if (m_bottomNumbers.contains(new Integer(n)))
+                 if (m_bottomNumbers.contains(new Integer(n)) || forceClear)
                  {
                      m_bottomNumbers.remove(new Integer(n));
                  }
@@ -364,14 +364,12 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
     public void handleEventNumberKeyTyped(int n, boolean forceClear)
     {
         if (m_isHighlighted)
-            setNumber(GlobalState.cellMode, forceClear ? 0 : n);
+            setNumber(GlobalState.cellMode, n, forceClear);
     }
 
     @Override
     public void handleEventLetterKeyTyped(char c)
     {
-        if (c == 'c' && m_isHighlighted)
-            setNumber(GlobalState.cellMode, 0);
     }
 
     @Override
@@ -384,7 +382,7 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
     public void handleImportCellValue(int x, int y, int n)
     {
         if (x == m_xPos && y == m_yPos)
-            setNumber(CellMode.GIVEN, n);        
+            setNumber(CellMode.GIVEN, n, false);
     }
 
     @Override

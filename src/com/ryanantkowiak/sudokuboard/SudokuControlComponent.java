@@ -18,26 +18,26 @@ public class SudokuControlComponent extends JComponent implements ActionListener
     private static final Color NOT_SELECTED_COLOR = new Color(220, 220, 220);
         
     // import/reset buttons
-    private JButton m_BtnImport = new JButton("Import...");
-    private JButton m_BtnReset = new JButton("Reset");
+    private JButton m_BtnImport = new JButton("Import... (I)");
+    private JButton m_BtnReset = new JButton("Reset (~)");
     
     // mode buttons
-    private JButton m_BtnModeGiven = new JButton("Given Numbers");
-    private JButton m_BtnModeTop = new JButton("Top");
-    private JButton m_BtnModeBottom = new JButton("Bottom");
-    private JButton m_BtnModeCenter = new JButton("Center");
+    private JButton m_BtnModeGiven = new JButton("Given Numbers (G)");
+    private JButton m_BtnModeTop = new JButton("Top (T)");
+    private JButton m_BtnModeBottom = new JButton("Bottom (B)");
+    private JButton m_BtnModeCenter = new JButton("Center (E)");
     
     // clear buttons
-    private JButton m_BtnClearTop = new JButton("Clear Top");
-    private JButton m_BtnClearBottom = new JButton("Clear Bottom");
-    private JButton m_BtnClearCenter = new JButton("Clear Center");
-    private JButton m_BtnClearAll = new JButton("Clear All");
-    private JButton m_BtnClearTopBottom = new JButton("Clear Top & Bottom");
+    private JButton m_BtnClearTop = new JButton("Clear Top (O)");
+    private JButton m_BtnClearBottom = new JButton("Clear Bottom (L)");
+    private JButton m_BtnClearCenter = new JButton("Clear Center (0)");
+    private JButton m_BtnClearAll = new JButton("Clear All (C)");
+    private JButton m_BtnClearTopBottom = new JButton("Clear Top & Bottom (P)");
     
     // check boxes
-    private JButton m_BtnCheckBoard = new JButton("Check Board");
-    private JCheckBox m_ChkKnightConstraint = new JCheckBox("Knight Constraint", false);
-    private JCheckBox m_ChkKingConstraint = new JCheckBox("King Constraint", false);
+    private JButton m_BtnCheckBoard = new JButton("Check Board (=)");
+    private JCheckBox m_ChkKnightConstraint = new JCheckBox("Knight Constraint (N)", false);
+    private JCheckBox m_ChkKingConstraint = new JCheckBox("King Constraint (K)", false);
         
     public SudokuControlComponent()
     {
@@ -201,11 +201,43 @@ public class SudokuControlComponent extends JComponent implements ActionListener
     @Override
     public void handleEventNumberKeyTyped(int n, boolean forceClear)
     {
+        if (n == '0')
+            m_BtnClearAll.doClick();
     }
 
     @Override
     public void handleEventLetterKeyTyped(char c)
     {
+        c = Character.toUpperCase(c);
+        
+        if (c == 'I')
+            m_BtnImport.doClick();
+        else if (c == '~')
+            m_BtnReset.doClick();
+        else if (c == 'G')
+            m_BtnModeGiven.doClick();
+        else if (c == 'T')
+            m_BtnModeTop.doClick();
+        else if (c == 'B')
+            m_BtnModeBottom.doClick();
+        else if (c == 'E')
+            m_BtnModeCenter.doClick();
+        else if (c == 'O')
+            m_BtnClearTop.doClick();
+        else if (c == 'L')
+            m_BtnClearBottom.doClick();
+        else if (c == '0' || c == ' ')
+             m_BtnClearAll.doClick();
+        else if (c == 'C')
+            m_BtnClearAll.doClick();
+        else if (c == 'P')
+            m_BtnClearTopBottom.doClick();
+        else if (c == '=' || c == '+')
+            m_BtnCheckBoard.doClick();
+        else if (c == 'N')
+            m_ChkKnightConstraint.doClick();
+        else if (c == 'K')
+            m_ChkKingConstraint.doClick();    
     }
 
     @Override

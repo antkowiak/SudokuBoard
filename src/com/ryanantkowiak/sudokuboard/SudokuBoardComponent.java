@@ -61,10 +61,9 @@ public class SudokuBoardComponent extends JComponent implements KeyListener, Sud
     {
         char c = event.getKeyChar();
         
-        if (c >= 0 && c <= '9')
+        if (c >= '0' && c <= '9')
             GlobalState.fireEventNumberKeyTyped(c - '0');
-
-        else if (c == 'c')
+        else
             GlobalState.fireEventLetterKeyTyped(c);
 
         repaint();
