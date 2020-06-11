@@ -285,6 +285,11 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
     }
 
     @Override
+    public void handleEventAboutButton()
+    {
+    }
+    
+    @Override
     public void handleEventImportButton()
     {        
         m_isGiven = false;

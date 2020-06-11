@@ -5,6 +5,9 @@ import java.util.List;
 
 public class GlobalState
 {
+    public static final String APP_TITLE = "Sudoku Board";
+    public static final String APP_VERSION_NUMBER = "1.20200611.0";
+    
     public static SudokuBoardComponent boardComponent;
     public static SudokuControlComponent controlComponent;
     public static SudokuBoardCell [][] cells = new SudokuBoardCell[9][9];
@@ -40,6 +43,7 @@ public class GlobalState
         m_listeners.remove(listener);
     }
     
+    public static void fireEventAboutButton()                        { for (SudokuListener sl : m_listeners) sl.handleEventAboutButton(); }
     public static void fireEventImportButton()                       { for (SudokuListener sl : m_listeners) sl.handleEventImportButton(); }
     public static void fireEventResetButton()                        { for (SudokuListener sl : m_listeners) sl.handleEventResetButton(); }
     public static void fireEventCellModeButton(CellMode newCellMode) { for (SudokuListener sl : m_listeners) sl.handleEventCellModeButton(newCellMode); }

@@ -18,6 +18,7 @@ public class SudokuControlComponent extends JComponent implements ActionListener
     private static final Color NOT_SELECTED_COLOR = new Color(220, 220, 220);
         
     // import/reset buttons
+    private JButton m_BtnAbout = new JButton("About (?)");
     private JButton m_BtnImport = new JButton("Import... (I)");
     private JButton m_BtnReset = new JButton("Reset (~)");
     
@@ -52,6 +53,7 @@ public class SudokuControlComponent extends JComponent implements ActionListener
 
         add(new JLabel());
 
+        add(m_BtnAbout);
         add(m_BtnImport);
         add(m_BtnReset);
         
@@ -92,6 +94,7 @@ public class SudokuControlComponent extends JComponent implements ActionListener
     
     private void addListeners()
     {
+        m_BtnAbout.addActionListener(this);
         m_BtnImport.addActionListener(this);
         m_BtnReset.addActionListener(this);
         
@@ -124,7 +127,9 @@ public class SudokuControlComponent extends JComponent implements ActionListener
     @Override
     public void actionPerformed(ActionEvent event)
     {
-        if (event.getSource() == m_BtnImport)
+        if (event.getSource() == m_BtnAbout)
+            GlobalState.fireEventAboutButton();
+        else if (event.getSource() == m_BtnImport)
             GlobalState.fireEventImportButton();
         else if (event.getSource() == m_BtnReset)
             GlobalState.fireEventResetButton();
@@ -150,6 +155,11 @@ public class SudokuControlComponent extends JComponent implements ActionListener
         GlobalState.fireEventRepaintRequest();
     }
 
+    @Override
+    public void handleEventAboutButton()
+    {
+    }
+    
     @Override
     public void handleEventImportButton()
     {
@@ -210,7 +220,9 @@ public class SudokuControlComponent extends JComponent implements ActionListener
     {
         c = Character.toUpperCase(c);
         
-        if (c == 'I')
+        if (c == '?' || c == '/')
+            m_BtnAbout.doClick();
+        else if (c == 'I')
             m_BtnImport.doClick();
         else if (c == '~')
             m_BtnReset.doClick();

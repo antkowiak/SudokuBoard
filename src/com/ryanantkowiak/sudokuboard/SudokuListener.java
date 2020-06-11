@@ -2,6 +2,7 @@ package com.ryanantkowiak.sudokuboard;
 
 public interface SudokuListener
 {
+    public abstract void handleEventAboutButton();
     public abstract void handleEventImportButton();
     public abstract void handleEventResetButton();
     public abstract void handleEventCellModeButton(CellMode newCellMode);

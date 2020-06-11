@@ -2,8 +2,10 @@ package com.ryanantkowiak.sudokuboard;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
 import java.awt.HeadlessException;
+import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 
@@ -16,10 +18,10 @@ public class SudokuBoardFrame extends JFrame
         GlobalState.boardComponent = new SudokuBoardComponent();
         GlobalState.controlComponent = new SudokuControlComponent();
         
-        setTitle("Sudoku Board");
+        setTitle(GlobalState.APP_TITLE);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setAlwaysOnTop(false);
-        setLocationRelativeTo(null);
+        setLocationByPlatform(true);
 
         getContentPane().setBackground(Color.BLACK);
         getContentPane().setLayout(new BorderLayout());

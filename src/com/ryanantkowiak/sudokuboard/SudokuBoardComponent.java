@@ -66,18 +66,29 @@ public class SudokuBoardComponent extends JComponent implements KeyListener, Sud
         else
             GlobalState.fireEventLetterKeyTyped(c);
 
-        repaint();
-
-        // TODO - more keyboard shortcuts       
+        repaint();       
     }
 
     @Override
+    public void handleEventAboutButton()
+    {
+        JOptionPane.showMessageDialog(this,
+                "Written by Ryan Antkowiak" + "\n" +
+                "antkowiak@gmail.com" + "\n" +
+                "Version: " + GlobalState.APP_VERSION_NUMBER,
+                "About " + GlobalState.APP_TITLE,
+                JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    @Override
     public void handleEventImportButton()
     {
-        GlobalState.importText = JOptionPane.showInputDialog("Import Sudoku Board:", GlobalState.importText);
+        String importText = JOptionPane.showInputDialog(this, "Import Sudoku Board:", GlobalState.importText);
         
-        if (GlobalState.importText != null && !GlobalState.importText.isEmpty())
+        if (importText != null && !importText.isEmpty())
         {            
+            GlobalState.importText = importText;
+            
             List<Integer> input = new ArrayList<Integer>();
             
             for (char c : GlobalState.importText.toCharArray())
