@@ -160,7 +160,12 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
         m_isHighlighted = highlighted;
         repaint();
     }
-       
+    
+    public int getCenterNumber()
+    {
+        return m_centerNumber;
+    }
+    
     private void setNumber(CellMode mode, int n, boolean forceClear)
     {
         if (mode == CellMode.GIVEN)

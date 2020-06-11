@@ -2,10 +2,8 @@ package com.ryanantkowiak.sudokuboard;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
 import java.awt.HeadlessException;
-import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 

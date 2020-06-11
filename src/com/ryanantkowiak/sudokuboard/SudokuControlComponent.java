@@ -10,6 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 public class SudokuControlComponent extends JComponent implements ActionListener, SudokuListener
 {
@@ -151,6 +152,8 @@ public class SudokuControlComponent extends JComponent implements ActionListener
             GlobalState.fireEventClearAllButton();
         else if (event.getSource() == m_BtnClearTopBottom)
             GlobalState.fireEventClearTopBottomButton();
+        else if (event.getSource() == m_BtnCheckBoard)
+            GlobalState.fireEventCheckBoardButton();
         
         GlobalState.fireEventRepaintRequest();
     }
@@ -206,6 +209,20 @@ public class SudokuControlComponent extends JComponent implements ActionListener
     @Override
     public void handleEventCheckBoardButton()
     {
+        boolean win = SudokuChecker.checkBoard(GlobalState.cells,
+                m_ChkKnightConstraint.isSelected(),
+                m_ChkKingConstraint.isSelected());
+
+        if (win)
+            JOptionPane.showMessageDialog(GlobalState.boardComponent,
+                    "The Sudoku Board appears to be CORRECT!",
+                    "Winner",
+                    JOptionPane.INFORMATION_MESSAGE);
+        else
+            JOptionPane.showMessageDialog(GlobalState.boardComponent,
+                    "There seems to be a problem with your solution...",
+                    "Error",
+                    JOptionPane.WARNING_MESSAGE);
     }
 
     @Override
