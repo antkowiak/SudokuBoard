@@ -4,3 +4,4 @@
 * Consider remapping keys to allow for vim movement for highlighted cell.
 * Use "SHIFT" plus vim key to highlight multiple
 * "U" for Undo
+* Add confirmation before Reset
