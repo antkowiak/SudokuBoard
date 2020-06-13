@@ -87,7 +87,7 @@ public class SudokuBoardComponent extends JComponent implements KeyListener, Sud
         
         if (importText != null && !importText.isEmpty())
         {   
-            GlobalState.fireEventResetButton();
+            GlobalState.FireEventReset();
             
             GlobalState.importText = importText;
             
