@@ -147,6 +147,7 @@ public class SudokuControlComponent extends JComponent implements ActionListener
             
             GlobalState.lastHighlightedCell = p;
             GlobalState.cells[p.x][p.y].setHighlighted(true);
+            GlobalState.boardComponent.repaint();
         }    
     }
     
@@ -167,6 +168,7 @@ public class SudokuControlComponent extends JComponent implements ActionListener
         {            
             GlobalState.lastHighlightedCell = p;
             GlobalState.cells[p.x][p.y].setHighlighted(true);
+            GlobalState.boardComponent.repaint();
         }    
     }
     

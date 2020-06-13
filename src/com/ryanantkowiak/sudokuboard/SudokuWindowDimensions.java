@@ -12,7 +12,7 @@ public class SudokuWindowDimensions
     private static int m_thickLine = 3;
 
     private static int m_controlWidth = 200;
-    
+        
     public static int getCellHeight() { return m_cellHeight; }
     public static void setCellHeight(int cellHeight) { m_cellHeight = cellHeight; }
 
@@ -73,7 +73,7 @@ public class SudokuWindowDimensions
     
     public static Dimension getControlDimension() { return new Dimension(getControlWidth(), getBoardHeight()); }
     public static Point getControlPosition() { return new Point(getBoardWidth(), 0); }
-    
+
     public static int getWindowWidth() { return getBoardWidth() + getControlWidth(); }
     public static int getWindowHeight() { return getBoardHeight(); }
 }

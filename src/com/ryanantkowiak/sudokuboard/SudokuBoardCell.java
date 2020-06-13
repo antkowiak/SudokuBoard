@@ -32,7 +32,9 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
     
     private static Color HL_BG_COLOR = new Color(255, 255, 150);
     private static Color NOT_HL_BG_COLOR = Color.WHITE;
-           
+    
+    private static Color LAST_SELECTED_COLOR = Color.GRAY;
+    
     private boolean m_isGiven = false;
     private boolean m_isHighlighted = false;
     private int m_centerNumber = 0;
@@ -85,7 +87,13 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
             setBackground(HL_BG_COLOR);
         else
             setBackground(NOT_HL_BG_COLOR);
-            
+        
+        if (m_xPos == GlobalState.lastHighlightedCell.x && m_yPos == GlobalState.lastHighlightedCell.y)
+        {
+            g.setColor(LAST_SELECTED_COLOR);
+            g.drawRect(0, 0, SudokuWindowDimensions.getCellWidth() - 1, SudokuWindowDimensions.getCellHeight() - 1);
+        }
+        
         if (m_isGiven && isValidNumber(m_centerNumber))
         {
             g.setColor(GIVEN_COLOR);
@@ -257,6 +265,7 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
                 setHighlighted(GlobalState.isSelecting);
                 GlobalState.lastHighlightedCell.x = m_xPos;
                 GlobalState.lastHighlightedCell.y = m_yPos;
+                GlobalState.boardComponent.repaint();
             }
     }
 
@@ -288,14 +297,16 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
         
         GlobalState.lastHighlightedCell.x = m_xPos;
         GlobalState.lastHighlightedCell.y = m_yPos;
+        GlobalState.boardComponent.repaint();
     }
 
     @Override
     public void mouseReleased(MouseEvent arg0)
     {
         GlobalState.isDragging = false;
-        GlobalState.lastHighlightedCell.x = m_xPos;
-        GlobalState.lastHighlightedCell.y = m_yPos;
+        //GlobalState.lastHighlightedCell.x = m_xPos;
+        //GlobalState.lastHighlightedCell.y = m_yPos;
+        GlobalState.boardComponent.repaint();
     }
 
     @Override

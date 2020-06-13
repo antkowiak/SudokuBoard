@@ -7,7 +7,7 @@ import java.util.List;
 public class GlobalState
 {
     public static final String APP_TITLE = "Sudoku Board";
-    public static final String APP_VERSION_NUMBER = "1.20200611.0";
+    public static final String APP_VERSION_NUMBER = "1.20200613.0";
     
     public static SudokuBoardComponent boardComponent;
     public static SudokuControlComponent controlComponent;
