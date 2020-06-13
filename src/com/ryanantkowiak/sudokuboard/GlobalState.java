@@ -1,5 +1,6 @@
 package com.ryanantkowiak.sudokuboard;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,8 @@ public class GlobalState
     public static CellMode cellMode = CellMode.GIVEN;
 
     public static String importText = "";
+    
+    public static Point lastHighlightedCell = new Point(0, 0);
     
     //
     
@@ -63,7 +66,7 @@ public class GlobalState
     }
 
     
-    public static void fireEventLetterKeyTyped(char c)               { for (SudokuListener sl : m_listeners) sl.handleEventLetterKeyTyped(c); }
+    public static void fireEventNonNumberKeyTyped(char c)               { for (SudokuListener sl : m_listeners) sl.handleEventLetterKeyTyped(c); }
     public static void fireEventRepaintRequest()                     { for (SudokuListener sl : m_listeners) sl.handleRepaintRequest(); }
     public static void fireEventImportCellValue(int x, int y, int n) { for (SudokuListener sl : m_listeners) sl.handleImportCellValue(x, y, n); }
     public static void fireEventHighlightAllCells(boolean highlight) { for (SudokuListener sl : m_listeners) sl.handleHighlightAllCells(highlight); }

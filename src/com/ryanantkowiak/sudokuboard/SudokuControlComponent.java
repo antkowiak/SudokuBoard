@@ -3,6 +3,7 @@ package com.ryanantkowiak.sudokuboard;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -30,8 +31,8 @@ public class SudokuControlComponent extends JComponent implements ActionListener
     private JButton m_BtnModeCenter = new JButton("Center (E)");
     
     // clear buttons
-    private JButton m_BtnClearTop = new JButton("Clear Top (O)");
-    private JButton m_BtnClearBottom = new JButton("Clear Bottom (L)");
+    private JButton m_BtnClearTop = new JButton("Clear Top ([)");
+    private JButton m_BtnClearBottom = new JButton("Clear Bottom (])");
     private JButton m_BtnClearCenter = new JButton("Clear Center (0)");
     private JButton m_BtnClearAll = new JButton("Clear All (C)");
     private JButton m_BtnClearTopBottom = new JButton("Clear Top & Bottom (P)");
@@ -39,7 +40,7 @@ public class SudokuControlComponent extends JComponent implements ActionListener
     // check boxes
     private JButton m_BtnCheckBoard = new JButton("Check Board (=)");
     private JCheckBox m_ChkKnightConstraint = new JCheckBox("Knight Constraint (N)", false);
-    private JCheckBox m_ChkKingConstraint = new JCheckBox("King Constraint (K)", false);
+    private JCheckBox m_ChkKingConstraint = new JCheckBox("King Constraint (M)", false);
         
     public SudokuControlComponent()
     {
@@ -125,6 +126,50 @@ public class SudokuControlComponent extends JComponent implements ActionListener
         m_BtnModeCenter.setBackground((cellMode == CellMode.CENTER) ? SELECTED_COLOR : NOT_SELECTED_COLOR);
     }
 
+    private void moveKeyPressed(char c)
+    {
+        Point p = new Point(GlobalState.lastHighlightedCell);
+        
+        switch(c)
+        {
+            case 'h': { p.x--; break;}
+            case 'j': { p.y++; break;}
+            case 'k': { p.y--; break;}
+            case 'l': { p.x++; break;}
+            default:  { return; }
+        }
+        
+        if (p.x >= 0 && p.x < 9 && p.y >= 0 && p.y < 9)
+        {
+            for (int x = 0 ; x < 9 ; ++x)
+                for (int y = 0 ; y < 9 ; ++y)
+                    GlobalState.cells[x][y].setHighlighted(false);
+            
+            GlobalState.lastHighlightedCell = p;
+            GlobalState.cells[p.x][p.y].setHighlighted(true);
+        }    
+    }
+    
+    private void moveAndSelectKeyPressed(char c)
+    {
+        Point p = new Point(GlobalState.lastHighlightedCell);
+        
+        switch(c)
+        {
+            case 'H': { p.x--; break;}
+            case 'J': { p.y++; break;}
+            case 'K': { p.y--; break;}
+            case 'L': { p.x++; break;}
+            default:  { return; }
+        }
+        
+        if (p.x >= 0 && p.x < 9 && p.y >= 0 && p.y < 9)
+        {            
+            GlobalState.lastHighlightedCell = p;
+            GlobalState.cells[p.x][p.y].setHighlighted(true);
+        }    
+    }
+    
     @Override
     public void actionPerformed(ActionEvent event)
     {
@@ -235,38 +280,43 @@ public class SudokuControlComponent extends JComponent implements ActionListener
     @Override
     public void handleEventLetterKeyTyped(char c)
     {
-        c = Character.toUpperCase(c);
+        char ch = Character.toUpperCase(c);
         
-        if (c == '?' || c == '/')
+        if (ch == '?' || ch == '/')
             m_BtnAbout.doClick();
-        else if (c == 'I')
+        else if (ch == 'I')
             m_BtnImport.doClick();
-        else if (c == '~')
+        else if (ch == '~')
             m_BtnReset.doClick();
-        else if (c == 'G')
+        else if (ch == 'G')
             m_BtnModeGiven.doClick();
-        else if (c == 'T')
+        else if (ch == 'T')
             m_BtnModeTop.doClick();
-        else if (c == 'B')
+        else if (ch == 'B')
             m_BtnModeBottom.doClick();
-        else if (c == 'E')
+        else if (ch == 'E')
             m_BtnModeCenter.doClick();
-        else if (c == 'O')
+        else if (ch == '[')
             m_BtnClearTop.doClick();
-        else if (c == 'L')
+        else if (ch == ']')
             m_BtnClearBottom.doClick();
-        else if (c == '0' || c == ' ')
+        else if (ch == ' ')
              m_BtnClearAll.doClick();
-        else if (c == 'C')
+        else if (ch == 'C')
             m_BtnClearAll.doClick();
-        else if (c == 'P')
+        else if (ch == 'P')
             m_BtnClearTopBottom.doClick();
-        else if (c == '=' || c == '+')
+        else if (ch == '=' || ch == '+')
             m_BtnCheckBoard.doClick();
-        else if (c == 'N')
+        else if (ch == 'N')
             m_ChkKnightConstraint.doClick();
-        else if (c == 'K')
-            m_ChkKingConstraint.doClick();    
+        else if (ch == 'M')
+            m_ChkKingConstraint.doClick();
+        
+        else if (c == 'h' || c == 'j' || c == 'k' || c == 'l')
+            moveKeyPressed(c);
+        else if (c == 'H' || c == 'J' || c == 'K' || c == 'L')
+            moveAndSelectKeyPressed(c);        
     }
 
     @Override
