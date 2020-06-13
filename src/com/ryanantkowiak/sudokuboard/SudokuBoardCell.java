@@ -388,6 +388,39 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
     }
 
     @Override
+    public void handleEventControlNumberKeyTyped(int n)
+    {
+        // highlight this cell if any of the following is true:
+        // number is set to non zero (any number)
+        // 'n' is in the column
+        // 'n' is in the row
+        // 'n' is in the 3x3 grid
+        
+        boolean highlight = false;
+        
+        if (m_centerNumber != 0)
+            highlight = true;
+        
+        for (int i = 0 ; i < 9 ; ++i)
+        {
+            if (GlobalState.cells[m_xPos][i].getCenterNumber() == n)
+                highlight = true;
+            if (GlobalState.cells[i][m_yPos].getCenterNumber() == n)
+                highlight = true;
+        }
+        
+        int boxStartX = (m_xPos / 3) * 3;
+        int boxStartY = (m_yPos / 3) * 3;
+        
+        for (int x = boxStartX ; x < boxStartX + 3 ; ++x)
+            for (int y = boxStartY ; y < boxStartY + 3 ; ++y)
+                if (GlobalState.cells[x][y].getCenterNumber() == n)
+                    highlight = true;
+        
+        setHighlighted(highlight);
+    }
+
+    @Override
     public void handleEventNumberKeyTyped(int n, boolean forceClear)
     {
         if (m_isHighlighted)

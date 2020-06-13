@@ -16,6 +16,8 @@ public class GlobalState
     public static boolean isSelecting = true;
     public static boolean isDragging = false;
 
+    public static boolean isControlKeyPressed = false;
+    
     public static CellMode cellMode = CellMode.GIVEN;
 
     public static String importText = "";
@@ -57,7 +59,8 @@ public class GlobalState
     public static void fireEventClearAllButton()                     { for (SudokuListener sl : m_listeners) sl.handleEventClearAllButton(); }
     public static void fireEventClearTopBottomButton()               { for (SudokuListener sl : m_listeners) sl.handleEventClearTopBottomButton(); }
     public static void fireEventCheckBoardButton()                   { for (SudokuListener sl : m_listeners) sl.handleEventCheckBoardButton(); }
-
+    public static void fireEventControlNumberKeyTyped(int n) { for (SudokuListener sl : m_listeners) sl.handleEventControlNumberKeyTyped(n); }
+    
     public static void fireEventNumberKeyTyped(int n)
     {
         boolean forceClear = doHighlightedCellsContainNumber(n);
@@ -65,7 +68,6 @@ public class GlobalState
         for (SudokuListener sl : m_listeners)
             sl.handleEventNumberKeyTyped(n, forceClear);
     }
-
     
     public static void fireEventNonNumberKeyTyped(char c)               { for (SudokuListener sl : m_listeners) sl.handleEventLetterKeyTyped(c); }
     public static void fireEventRepaintRequest()                     { for (SudokuListener sl : m_listeners) sl.handleRepaintRequest(); }

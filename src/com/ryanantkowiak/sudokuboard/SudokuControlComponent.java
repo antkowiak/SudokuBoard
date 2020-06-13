@@ -278,6 +278,11 @@ public class SudokuControlComponent extends JComponent implements ActionListener
     }
 
     @Override
+    public void handleEventControlNumberKeyTyped(int n)
+    {
+    }
+    
+    @Override
     public void handleEventNumberKeyTyped(int n, boolean forceClear)
     {
         if (n == '0')

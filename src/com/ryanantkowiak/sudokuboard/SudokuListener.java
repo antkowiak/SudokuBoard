@@ -13,6 +13,7 @@ public interface SudokuListener
     public abstract void handleEventClearAllButton();
     public abstract void handleEventClearTopBottomButton();
     public abstract void handleEventCheckBoardButton();
+    public abstract void handleEventControlNumberKeyTyped(int n);
     public abstract void handleEventNumberKeyTyped(int n, boolean forceClear);
     public abstract void handleEventLetterKeyTyped(char c);
     public abstract void handleRepaintRequest();

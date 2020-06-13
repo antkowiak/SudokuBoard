@@ -47,13 +47,22 @@ public class SudokuBoardComponent extends JComponent implements KeyListener, Sud
     }
    
     @Override
-    public void keyPressed(KeyEvent arg0)
+    public void keyPressed(KeyEvent event)
     {
+        char c = event.getKeyChar();
+        
+        if (event.getKeyCode() == KeyEvent.VK_CONTROL)
+            GlobalState.isControlKeyPressed = true;            
+            
+        if (GlobalState.isControlKeyPressed && (c >= '1' && c <= '9'))
+            GlobalState.fireEventControlNumberKeyTyped(c - '0');
     }
-
+    
     @Override
-    public void keyReleased(KeyEvent arg0)
+    public void keyReleased(KeyEvent event)
     {
+        if (event.getKeyCode() == KeyEvent.VK_CONTROL)
+            GlobalState.isControlKeyPressed = false;
     }
 
     @Override
@@ -61,7 +70,7 @@ public class SudokuBoardComponent extends JComponent implements KeyListener, Sud
     {
         char c = event.getKeyChar();
         
-        if (c >= '0' && c <= '9')
+        if (!GlobalState.isControlKeyPressed && (c >= '0' && c <= '9'))
             GlobalState.fireEventNumberKeyTyped(c - '0');
         else
             GlobalState.fireEventNonNumberKeyTyped(c);
@@ -173,6 +182,11 @@ public class SudokuBoardComponent extends JComponent implements KeyListener, Sud
     {
     }
 
+    @Override
+    public void handleEventControlNumberKeyTyped(int n)
+    {
+    }
+    
     @Override
     public void handleEventNumberKeyTyped(int n, boolean forceClear)
     {
