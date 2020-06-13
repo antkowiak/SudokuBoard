@@ -5,6 +5,7 @@ public interface SudokuListener
     public abstract void handleEventAboutButton();
     public abstract void handleEventImportButton();
     public abstract void handleEventResetButton();
+    public abstract void handleEventReset();
     public abstract void handleEventCellModeButton(CellMode newCellMode);
     public abstract void handleEventClearTopButton();
     public abstract void handleEventClearBottomButton();

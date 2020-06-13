@@ -217,9 +217,14 @@ public class SudokuControlComponent extends JComponent implements ActionListener
     }
 
     @Override
-    public void handleEventResetButton()
+    public void handleEventReset()
     {
         setCellMode(CellMode.GIVEN);
+    }
+    
+    @Override
+    public void handleEventResetButton()
+    {
     }
 
     @Override

@@ -304,8 +304,6 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
     public void mouseReleased(MouseEvent arg0)
     {
         GlobalState.isDragging = false;
-        //GlobalState.lastHighlightedCell.x = m_xPos;
-        //GlobalState.lastHighlightedCell.y = m_yPos;
         GlobalState.boardComponent.repaint();
     }
 
@@ -316,17 +314,16 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
     
     @Override
     public void handleEventImportButton()
-    {        
-        m_isGiven = false;
-        m_isHighlighted = false;
-        m_centerNumber = 0;
-        m_topNumbers.clear();
-        m_bottomNumbers.clear();
-        repaint();
+    {
     }
 
     @Override
     public void handleEventResetButton()
+    {
+    }
+
+    @Override
+    public void handleEventReset()
     {
         m_isGiven = false;
         m_isHighlighted = false;
@@ -335,7 +332,7 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
         m_bottomNumbers.clear();
         repaint();
     }
-
+    
     @Override
     public void handleEventCellModeButton(CellMode newCellMode)
     {        

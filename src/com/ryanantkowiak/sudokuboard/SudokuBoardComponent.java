@@ -86,7 +86,9 @@ public class SudokuBoardComponent extends JComponent implements KeyListener, Sud
         String importText = JOptionPane.showInputDialog(this, "Import Sudoku Board:", GlobalState.importText);
         
         if (importText != null && !importText.isEmpty())
-        {            
+        {   
+            GlobalState.fireEventResetButton();
+            
             GlobalState.importText = importText;
             
             List<Integer> input = new ArrayList<Integer>();
@@ -120,8 +122,20 @@ public class SudokuBoardComponent extends JComponent implements KeyListener, Sud
     }
 
     @Override
+    public void handleEventReset()
+    {
+    }
+    
+    @Override
     public void handleEventResetButton()
     {
+        int choice = JOptionPane.showConfirmDialog(GlobalState.boardComponent,
+                "Are you sure you want to reset the board?",
+                "Reset Confirmation",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        
+        if (choice == 0)
+            GlobalState.FireEventReset();
     }
 
     @Override

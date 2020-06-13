@@ -7,7 +7,7 @@ import java.util.List;
 public class GlobalState
 {
     public static final String APP_TITLE = "Sudoku Board";
-    public static final String APP_VERSION_NUMBER = "1.20200613.0";
+    public static final String APP_VERSION_NUMBER = "1.20200613.1";
     
     public static SudokuBoardComponent boardComponent;
     public static SudokuControlComponent controlComponent;
@@ -49,6 +49,7 @@ public class GlobalState
     public static void fireEventAboutButton()                        { for (SudokuListener sl : m_listeners) sl.handleEventAboutButton(); }
     public static void fireEventImportButton()                       { for (SudokuListener sl : m_listeners) sl.handleEventImportButton(); }
     public static void fireEventResetButton()                        { for (SudokuListener sl : m_listeners) sl.handleEventResetButton(); }
+    public static void FireEventReset()                              { for (SudokuListener sl : m_listeners) sl.handleEventReset(); }
     public static void fireEventCellModeButton(CellMode newCellMode) { for (SudokuListener sl : m_listeners) sl.handleEventCellModeButton(newCellMode); }
     public static void fireEventClearTopButton()                     { for (SudokuListener sl : m_listeners) sl.handleEventClearTopButton(); }
     public static void fireEventClearBottomButton()                  { for (SudokuListener sl : m_listeners) sl.handleEventClearBottomButton(); }
