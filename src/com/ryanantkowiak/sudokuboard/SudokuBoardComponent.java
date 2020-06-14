@@ -53,7 +53,13 @@ public class SudokuBoardComponent extends JComponent implements KeyListener, Sud
         
         if (event.getKeyCode() == KeyEvent.VK_CONTROL)
             GlobalState.isControlKeyPressed = true;            
-            
+
+
+        // Don't know why, but for some reason, the '6' isn't returned from getKeyChar
+        // when the CTRL button is pressed down. This should work around it...
+        if (GlobalState.isControlKeyPressed && event.getKeyCode() == 54)
+            c = '6';
+        
         if (GlobalState.isControlKeyPressed && (c >= '1' && c <= '9'))
             GlobalState.fireEventControlNumberKeyTyped(c - '0');
     }
