@@ -8,8 +8,9 @@ import java.awt.event.KeyListener;
 import javax.swing.JComponent;
 
 import com.ryanantkowiak.sudokuboard.sm.GlobalState;
+import com.ryanantkowiak.sudokuboard.sm.SudokuStateStack;
 
-public class SudokuBoardComponent extends JComponent implements KeyListener, SudokuListener
+public class SudokuBoardComponent extends JComponent implements KeyListener
 {
     
     private static final long serialVersionUID = 1L;
@@ -43,7 +44,6 @@ public class SudokuBoardComponent extends JComponent implements KeyListener, Sud
 
         addCells();
      
-        GlobalState.addSudokuListener(this);
         addKeyListener(this);
     }
    
@@ -68,19 +68,15 @@ public class SudokuBoardComponent extends JComponent implements KeyListener, Sud
         repaint();       
     }
     
-    @Override
-    public void handleEventNumberKeyTyped(int n, boolean forceClear)
+    public void highlightAllCells(boolean highlighted)
     {
-    }
-
-    @Override
-    public void handleImportCellValue(int x, int y, int n)
-    {
-    }
-
-    @Override
-    public void handleHighlightAllCells(boolean highlighted)
-    {
+        for (int y = 0 ; y < 9 ; ++y)
+        {
+            for (int x = 0 ; x < 9 ; ++x)
+            {
+                SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[x][y].isHighlighted = highlighted;
+            }
+        }
     }
 
 }

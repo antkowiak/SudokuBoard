@@ -22,7 +22,7 @@ import com.ryanantkowiak.sudokuboard.sm.CellState;
 import com.ryanantkowiak.sudokuboard.sm.GlobalState;
 import com.ryanantkowiak.sudokuboard.sm.SudokuStateStack;
 
-public class SudokuControlComponent extends JComponent implements ActionListener, KeyListener, SudokuListener
+public class SudokuControlComponent extends JComponent implements ActionListener, KeyListener
 {
     private static final long serialVersionUID = 1L;
     private static final Color SELECTED_COLOR = new Color(144, 202, 249);
@@ -52,9 +52,7 @@ public class SudokuControlComponent extends JComponent implements ActionListener
     private JCheckBox m_ChkKingConstraint = new JCheckBox("King Constraint (M)", false);
         
     public SudokuControlComponent()
-    {
-        GlobalState.addSudokuListener(this);
-        
+    {        
         setSize(SudokuWindowDimensions.getControlDimension());
         setPreferredSize(SudokuWindowDimensions.getControlDimension());
         setBackground(Color.WHITE);
@@ -197,32 +195,19 @@ public class SudokuControlComponent extends JComponent implements ActionListener
         char c = event.getKeyChar();
         
         if (!GlobalState.isControlKeyPressed && (c >= '0' && c <= '9'))
+        {
             GlobalState.fireEventNumberKeyTyped(c - '0');
+            
+            if (c == '0')
+                m_BtnClearAll.doClick();
+        }
         else
             handle_non_number_key(c);
     }
        
-    @Override
-    public void handleEventNumberKeyTyped(int n, boolean forceClear)
-    {
-        if (n == '0')
-            m_BtnClearAll.doClick();
-    }
-
-    @Override
-    public void handleImportCellValue(int x, int y, int n)
-    {
-    }
-
-    @Override
-    public void handleHighlightAllCells(boolean highlighted)
-    {        
-    }
+  
     
-    
-    
-    
-    /////////////// NEW HANDLERS
+    /////////////// HANDLERS
     private void handle_about()
     {
         JOptionPane.showMessageDialog(GlobalState.boardComponent,
@@ -511,8 +496,6 @@ public class SudokuControlComponent extends JComponent implements ActionListener
             m_BtnAbout.doClick();
         else if (c == 'i')
             m_BtnImport.doClick();
-        else if (c == 'I')
-            handle_invert_selection();
         else if (c == '~')
             m_BtnReset.doClick();
         else if (c == 'G' || c == 'g')
@@ -539,6 +522,8 @@ public class SudokuControlComponent extends JComponent implements ActionListener
             m_ChkKnightConstraint.doClick();
         else if (c == 'M' || c == 'm')
             m_ChkKingConstraint.doClick();
+        else if (c == 'I')
+            handle_invert_selection();
         else if (c == 'h' || c == 'j' || c == 'k' || c == 'l')
             handle_move_key(c);
         else if (c == 'H' || c == 'J' || c == 'K' || c == 'L')

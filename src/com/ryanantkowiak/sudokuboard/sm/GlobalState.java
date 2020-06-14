@@ -62,5 +62,4 @@ public class GlobalState
     }
     
     public static void fireEventImportCellValue(int x, int y, int n) { for (SudokuListener sl : m_listeners) sl.handleImportCellValue(x, y, n); }
-    public static void fireEventHighlightAllCells(boolean highlight) { for (SudokuListener sl : m_listeners) sl.handleHighlightAllCells(highlight); }
 }
