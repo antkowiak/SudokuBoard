@@ -162,6 +162,8 @@ public class SudokuControlComponent extends JComponent implements ActionListener
             handle_clear_top_bottom();
         else if (event.getSource() == m_BtnCheckBoard)
             handle_check_board();
+        
+        GlobalState.boardComponent.repaint();
     }   
     
     @Override
