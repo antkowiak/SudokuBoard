@@ -126,6 +126,14 @@ public class SudokuControlComponent extends JComponent implements ActionListener
         m_BtnModeCenter.setBackground((cellMode == CellMode.CENTER) ? SELECTED_COLOR : NOT_SELECTED_COLOR);
     }
 
+    private void invertSelection()
+    {
+        for (int x = 0 ; x < 9 ; ++x)
+            for (int y = 0 ; y < 9 ; ++y)
+                GlobalState.cells[x][y].toggleHighlighted(false);
+        repaint();
+    }
+    
     private void moveKeyPressed(char c)
     {
         Point p = new Point(GlobalState.lastHighlightedCell);
@@ -296,8 +304,10 @@ public class SudokuControlComponent extends JComponent implements ActionListener
         
         if (ch == '?' || ch == '/')
             m_BtnAbout.doClick();
-        else if (ch == 'I')
+        else if (c == 'i')
             m_BtnImport.doClick();
+        else if (c == 'I')
+            invertSelection();
         else if (ch == '~')
             m_BtnReset.doClick();
         else if (ch == 'G')

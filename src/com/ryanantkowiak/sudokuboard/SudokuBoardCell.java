@@ -157,10 +157,12 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
         g.drawString(text, x, y);
     }
 
-    private void toggleHighlighted()
+    public void toggleHighlighted(boolean redraw)
     {
         m_isHighlighted = !m_isHighlighted;
-        repaint();
+        
+        if (redraw)
+            repaint();
     }
     
     public void setHighlighted(boolean highlighted)
@@ -281,7 +283,7 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
         {
             GlobalState.isDragging = true;
             GlobalState.isSelecting = !m_isHighlighted;
-            toggleHighlighted();
+            toggleHighlighted(true);
         }
         
         if (SwingUtilities.isLeftMouseButton(arg0))
