@@ -31,7 +31,6 @@ public class SudokuBoardFrame extends JFrame
         pack();
         
         setVisible(true);
-        GlobalState.fireEventRepaintRequest();
     }
     
     public SudokuBoardFrame() throws HeadlessException

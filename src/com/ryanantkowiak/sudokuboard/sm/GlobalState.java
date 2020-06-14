@@ -52,20 +52,7 @@ public class GlobalState
     {
         m_listeners.remove(listener);
     }
-    
-    public static void fireEventAboutButton()                        { for (SudokuListener sl : m_listeners) sl.handleEventAboutButton(); }
-    public static void fireEventImportButton()                       { for (SudokuListener sl : m_listeners) sl.handleEventImportButton(); }
-    public static void fireEventResetButton()                        { for (SudokuListener sl : m_listeners) sl.handleEventResetButton(); }
-    public static void FireEventReset()                              { for (SudokuListener sl : m_listeners) sl.handleEventReset(); }
-    public static void fireEventCellModeButton(CellMode newCellMode) { for (SudokuListener sl : m_listeners) sl.handleEventCellModeButton(newCellMode); }
-    public static void fireEventClearTopButton()                     { for (SudokuListener sl : m_listeners) sl.handleEventClearTopButton(); }
-    public static void fireEventClearBottomButton()                  { for (SudokuListener sl : m_listeners) sl.handleEventClearBottomButton(); }
-    public static void fireEventClearCenterButton()                  { for (SudokuListener sl : m_listeners) sl.handleEventClearCenterButton(); }
-    public static void fireEventClearAllButton()                     { for (SudokuListener sl : m_listeners) sl.handleEventClearAllButton(); }
-    public static void fireEventClearTopBottomButton()               { for (SudokuListener sl : m_listeners) sl.handleEventClearTopBottomButton(); }
-    public static void fireEventCheckBoardButton()                   { for (SudokuListener sl : m_listeners) sl.handleEventCheckBoardButton(); }
-    public static void fireEventControlNumberKeyTyped(int n) { for (SudokuListener sl : m_listeners) sl.handleEventControlNumberKeyTyped(n); }
-    
+       
     public static void fireEventNumberKeyTyped(int n)
     {
         boolean forceClear = doHighlightedCellsContainNumber(n);
@@ -74,8 +61,6 @@ public class GlobalState
             sl.handleEventNumberKeyTyped(n, forceClear);
     }
     
-    public static void fireEventNonNumberKeyTyped(char c)               { for (SudokuListener sl : m_listeners) sl.handleEventLetterKeyTyped(c); }
-    public static void fireEventRepaintRequest()                     { for (SudokuListener sl : m_listeners) sl.handleRepaintRequest(); }
     public static void fireEventImportCellValue(int x, int y, int n) { for (SudokuListener sl : m_listeners) sl.handleImportCellValue(x, y, n); }
     public static void fireEventHighlightAllCells(boolean highlight) { for (SudokuListener sl : m_listeners) sl.handleHighlightAllCells(highlight); }
 }

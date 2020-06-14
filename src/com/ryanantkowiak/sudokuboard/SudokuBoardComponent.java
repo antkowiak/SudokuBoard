@@ -4,13 +4,9 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JComponent;
-import javax.swing.JOptionPane;
 
-import com.ryanantkowiak.sudokuboard.sm.CellMode;
 import com.ryanantkowiak.sudokuboard.sm.GlobalState;
 
 public class SudokuBoardComponent extends JComponent implements KeyListener, SudokuListener
@@ -21,6 +17,8 @@ public class SudokuBoardComponent extends JComponent implements KeyListener, Sud
     protected void paintComponent(Graphics g)
     {
         super.paintComponent(g);     
+        setFocusable(true);
+        requestFocus();
     }
 
     private void addCells()
@@ -52,166 +50,27 @@ public class SudokuBoardComponent extends JComponent implements KeyListener, Sud
     @Override
     public void keyPressed(KeyEvent event)
     {
-        char c = event.getKeyChar();
-        
-        if (event.getKeyCode() == KeyEvent.VK_CONTROL)
-            GlobalState.isControlKeyPressed = true;            
-
-
-        // Don't know why, but for some reason, the '6' isn't returned from getKeyChar
-        // when the CTRL button is pressed down. This should work around it...
-        if (GlobalState.isControlKeyPressed && event.getKeyCode() == 54)
-            c = '6';
-        
-        if (GlobalState.isControlKeyPressed && (c >= '1' && c <= '9'))
-            GlobalState.fireEventControlNumberKeyTyped(c - '0');
+        GlobalState.controlComponent.keyPressed(event);
+        repaint();
     }
     
     @Override
     public void keyReleased(KeyEvent event)
     {
-        if (event.getKeyCode() == KeyEvent.VK_CONTROL)
-            GlobalState.isControlKeyPressed = false;
+        GlobalState.controlComponent.keyReleased(event);
+        repaint();
     }
 
     @Override
     public void keyTyped(KeyEvent event)
     {
-        char c = event.getKeyChar();
-        
-        if (!GlobalState.isControlKeyPressed && (c >= '0' && c <= '9'))
-            GlobalState.fireEventNumberKeyTyped(c - '0');
-        else
-            GlobalState.fireEventNonNumberKeyTyped(c);
-
+        GlobalState.controlComponent.keyTyped(event);
         repaint();       
-    }
-
-    @Override
-    public void handleEventAboutButton()
-    {
-        JOptionPane.showMessageDialog(this,
-                "Written by Ryan Antkowiak" + "\n" +
-                "antkowiak@gmail.com" + "\n" +
-                "Version: " + GlobalState.APP_VERSION_NUMBER,
-                "About " + GlobalState.APP_TITLE,
-                JOptionPane.INFORMATION_MESSAGE);
-    }
-    
-    @Override
-    public void handleEventImportButton()
-    {
-        String importText = JOptionPane.showInputDialog(this, "Import Sudoku Board:", GlobalState.importText);
-        
-        if (importText != null && !importText.isEmpty())
-        {   
-            GlobalState.FireEventReset();
-            
-            GlobalState.importText = importText;
-            
-            List<Integer> input = new ArrayList<Integer>();
-            
-            for (char c : GlobalState.importText.toCharArray())
-            {
-                int n = c - '0';
-                
-                if (n >= 0 && n <= 9)
-                    input.add(n);
-            }
-            
-            int inputIdx = 0;
-            
-            for (int y = 0 ; y < 9 ; ++y)
-            {
-                for (int x = 0 ; x < 9 ; ++x)
-                {
-                    if (inputIdx < input.size())
-                        GlobalState.fireEventImportCellValue(x, y, input.get(inputIdx));
-                    ++inputIdx;
-                    
-                    if (inputIdx >= input.size())
-                        break;
-                }
-                
-                if (inputIdx >= input.size())
-                    break;
-            }
-        }
-    }
-
-    @Override
-    public void handleEventReset()
-    {
-    }
-    
-    @Override
-    public void handleEventResetButton()
-    {
-        int choice = JOptionPane.showConfirmDialog(GlobalState.boardComponent,
-                "Are you sure you want to reset the board?",
-                "Reset Confirmation",
-                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-        
-        if (choice == 0)
-            GlobalState.FireEventReset();
-    }
-
-    @Override
-    public void handleEventCellModeButton(CellMode newCellMode)
-    {
-    }
-
-    @Override
-    public void handleEventClearTopButton()
-    {
-    }
-
-    @Override
-    public void handleEventClearBottomButton()
-    {
-    }
-
-    @Override
-    public void handleEventClearCenterButton()
-    {
-    }
-
-    @Override
-    public void handleEventClearAllButton()
-    {
-    }
-
-    @Override
-    public void handleEventClearTopBottomButton()
-    {
-    }
-
-    @Override
-    public void handleEventCheckBoardButton()
-    {
-    }
-
-    @Override
-    public void handleEventControlNumberKeyTyped(int n)
-    {
     }
     
     @Override
     public void handleEventNumberKeyTyped(int n, boolean forceClear)
     {
-    }
-
-    @Override
-    public void handleEventLetterKeyTyped(char c)
-    {
-    }
-
-    @Override
-    public void handleRepaintRequest()
-    {
-        repaint();
-        setFocusable(true);
-        requestFocus();
     }
 
     @Override

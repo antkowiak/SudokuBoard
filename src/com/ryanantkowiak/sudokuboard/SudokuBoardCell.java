@@ -259,7 +259,6 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
         if (SwingUtilities.isLeftMouseButton(arg0))
         {
             cellState.setHighlighted(true);
-            GlobalState.fireEventRepaintRequest();
             GlobalState.isDragging = false;
             GlobalState.isSelecting = false;
             
@@ -280,151 +279,12 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
     }
 
     @Override
-    public void handleEventAboutButton()
-    {
-    }
-    
-    @Override
-    public void handleEventImportButton()
-    {
-    }
-
-    @Override
-    public void handleEventResetButton()
-    {
-    }
-
-    @Override
-    public void handleEventReset()
-    {
-        CellState cellState = getCellState();
-        
-        cellState.isGiven = false;
-        cellState.isHighlighted = false;
-        cellState.centerNumber = 0;
-        cellState.topNumbers.clear();
-        cellState.bottomNumbers.clear();
-        repaint();
-    }
-    
-    @Override
-    public void handleEventCellModeButton(CellMode newCellMode)
-    {        
-    }
-
-    @Override
-    public void handleEventClearTopButton()
-    {
-        CellState cellState = getCellState();
-        
-        if (cellState.isHighlighted)
-            cellState.topNumbers.clear();
-    }
-
-    @Override
-    public void handleEventClearBottomButton()
-    {
-        CellState cellState = getCellState();
-        
-        if (cellState.isHighlighted)
-            cellState.bottomNumbers.clear();
-    }
-
-    @Override
-    public void handleEventClearCenterButton()
-    {
-        CellState cellState = getCellState();
-        
-        if (cellState.isHighlighted && !cellState.isGiven)
-            cellState.centerNumber = 0;
-    }
-
-    @Override
-    public void handleEventClearAllButton()
-    {
-        CellState cellState = getCellState();
-        
-        if (cellState.isHighlighted)
-        {
-            cellState.topNumbers.clear();
-            cellState.bottomNumbers.clear();
-            
-            if (!cellState.isGiven)
-                cellState.centerNumber = 0;
-        }
-    }
-
-    @Override
-    public void handleEventClearTopBottomButton()
-    {
-        CellState cellState = getCellState();
-        
-        if (cellState.isHighlighted)
-        {
-            cellState.topNumbers.clear();
-            cellState.bottomNumbers.clear();
-        }
-    }
-
-    @Override
-    public void handleEventCheckBoardButton()
-    {
-    }
-
-    @Override
-    public void handleEventControlNumberKeyTyped(int n)
-    {
-        CellState cellState = getCellState();
-        
-        // highlight this cell if any of the following is true:
-        // number is set to non zero (any number)
-        // 'n' is in the column
-        // 'n' is in the row
-        // 'n' is in the 3x3 grid
-        
-        boolean highlight = false;
-        
-        if (cellState.centerNumber != 0)
-            highlight = true;
-        
-        for (int i = 0 ; i < 9 ; ++i)
-        {
-            if (SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[m_x][i].centerNumber == n)
-                highlight = true;
-            if (SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[i][m_y].centerNumber == n)
-                highlight = true;
-        }
-        
-        int boxStartX = (m_x / 3) * 3;
-        int boxStartY = (m_y / 3) * 3;
-        
-        for (int x = boxStartX ; x < boxStartX + 3 ; ++x)
-            for (int y = boxStartY ; y < boxStartY + 3 ; ++y)
-                if (SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[x][y].centerNumber == n)
-                    highlight = true;
-        
-        cellState.setHighlighted(highlight);
-        repaint();
-    }
-
-    @Override
     public void handleEventNumberKeyTyped(int n, boolean forceClear)
     {
         CellState cellState = getCellState();
         
         if (cellState.isHighlighted)
             setNumber(GlobalState.cellMode, n, forceClear);
-    }
-
-    @Override
-    public void handleEventLetterKeyTyped(char c)
-    {
-    }
-
-    @Override
-    public void handleRepaintRequest()
-    {
-        repaint();
     }
 
     @Override

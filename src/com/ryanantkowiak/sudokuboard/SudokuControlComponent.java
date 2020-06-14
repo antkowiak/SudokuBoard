@@ -6,6 +6,10 @@ import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -14,10 +18,11 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import com.ryanantkowiak.sudokuboard.sm.CellMode;
+import com.ryanantkowiak.sudokuboard.sm.CellState;
 import com.ryanantkowiak.sudokuboard.sm.GlobalState;
 import com.ryanantkowiak.sudokuboard.sm.SudokuStateStack;
 
-public class SudokuControlComponent extends JComponent implements ActionListener, SudokuListener
+public class SudokuControlComponent extends JComponent implements ActionListener, KeyListener, SudokuListener
 {
     private static final long serialVersionUID = 1L;
     private static final Color SELECTED_COLOR = new Color(144, 202, 249);
@@ -129,16 +134,294 @@ public class SudokuControlComponent extends JComponent implements ActionListener
         m_BtnModeBottom.setBackground((cellMode == CellMode.BOTTOM) ? SELECTED_COLOR : NOT_SELECTED_COLOR);
         m_BtnModeCenter.setBackground((cellMode == CellMode.CENTER) ? SELECTED_COLOR : NOT_SELECTED_COLOR);
     }
-
-    private void invertSelection()
+    
+    @Override
+    public void actionPerformed(ActionEvent event)
     {
-        for (int x = 0 ; x < 9 ; ++x)
-            for (int y = 0 ; y < 9 ; ++y)
-                SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[x][y].toggleHighlighted();
-        repaint();
+        if (event.getSource() == m_BtnAbout)
+            handle_about();
+        else if (event.getSource() == m_BtnImport)
+            handle_import();
+        else if (event.getSource() == m_BtnReset)
+            handle_reset();
+        else if (event.getSource() == m_BtnModeGiven)
+            handle_cell_mode_button(CellMode.GIVEN);
+        else if (event.getSource() == m_BtnModeTop)
+            handle_cell_mode_button(CellMode.TOP);
+        else if (event.getSource() == m_BtnModeBottom)
+            handle_cell_mode_button(CellMode.BOTTOM);
+        else if (event.getSource() == m_BtnModeCenter)
+            handle_cell_mode_button(CellMode.CENTER);
+        else if (event.getSource() == m_BtnClearTop)
+            handle_clear_top();
+        else if (event.getSource() == m_BtnClearBottom)
+            handle_clear_bottom();
+        else if (event.getSource() == m_BtnClearCenter)
+            handle_clear_center();
+        else if (event.getSource() == m_BtnClearAll)
+            handle_clear_all();
+        else if (event.getSource() == m_BtnClearTopBottom)
+            handle_clear_top_bottom();
+        else if (event.getSource() == m_BtnCheckBoard)
+            handle_check_board();
+    }   
+    
+    @Override
+    public void keyPressed(KeyEvent event)
+    {
+        char c = event.getKeyChar();
+        
+        if (event.getKeyCode() == KeyEvent.VK_CONTROL)
+            GlobalState.isControlKeyPressed = true;            
+
+
+        // Don't know why, but for some reason, the '6' isn't returned from getKeyChar
+        // when the CTRL button is pressed down. This should work around it...
+        if (GlobalState.isControlKeyPressed && event.getKeyCode() == 54)
+            c = '6';
+        
+        if (GlobalState.isControlKeyPressed && (c >= '1' && c <= '9'))
+            handle_ctrl_and_number_key(c - '0');
+    }
+
+    @Override
+    public void keyReleased(KeyEvent event)
+    {
+        if (event.getKeyCode() == KeyEvent.VK_CONTROL)
+            GlobalState.isControlKeyPressed = false;
+    }
+
+    @Override
+    public void keyTyped(KeyEvent event)
+    {
+        char c = event.getKeyChar();
+        
+        if (!GlobalState.isControlKeyPressed && (c >= '0' && c <= '9'))
+            GlobalState.fireEventNumberKeyTyped(c - '0');
+        else
+            handle_non_number_key(c);
+    }
+       
+    @Override
+    public void handleEventNumberKeyTyped(int n, boolean forceClear)
+    {
+        if (n == '0')
+            m_BtnClearAll.doClick();
+    }
+
+    @Override
+    public void handleImportCellValue(int x, int y, int n)
+    {
+    }
+
+    @Override
+    public void handleHighlightAllCells(boolean highlighted)
+    {        
     }
     
-    private void moveKeyPressed(char c)
+    
+    
+    
+    /////////////// NEW HANDLERS
+    private void handle_about()
+    {
+        JOptionPane.showMessageDialog(GlobalState.boardComponent,
+                "Written by Ryan Antkowiak" + "\n" +
+                "antkowiak@gmail.com" + "\n" +
+                "Version: " + GlobalState.APP_VERSION_NUMBER,
+                "About " + GlobalState.APP_TITLE,
+                JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    private void handle_import()
+    {
+        String importText = JOptionPane.showInputDialog(GlobalState.boardComponent, "Import Sudoku Board:", GlobalState.importText);
+        
+        if (importText != null && !importText.isEmpty())
+        {   
+            CellState [][] cellStates = SudokuStateStack.getInstance().getCurrentState().boardState.cellStates;
+            
+            for (int y = 0 ; y < 9 ; ++y)
+                for (int x = 0 ; x < 9 ; ++x)
+                    cellStates[x][y].reset();
+            
+            GlobalState.importText = importText;
+            
+            List<Integer> input = new ArrayList<Integer>();
+            
+            for (char c : GlobalState.importText.toCharArray())
+            {
+                int n = c - '0';
+                
+                if (n >= 0 && n <= 9)
+                    input.add(n);
+            }
+            
+            int inputIdx = 0;
+            
+            for (int y = 0 ; y < 9 ; ++y)
+            {
+                for (int x = 0 ; x < 9 ; ++x)
+                {
+                    if (inputIdx < input.size())
+                        GlobalState.fireEventImportCellValue(x, y, input.get(inputIdx));
+                    ++inputIdx;
+                    
+                    if (inputIdx >= input.size())
+                        break;
+                }
+                
+                if (inputIdx >= input.size())
+                    break;
+            }
+            
+            GlobalState.boardComponent.repaint();
+            setCellMode(CellMode.CENTER);
+        }        
+    }
+    
+    private void handle_reset()
+    {
+        int choice = JOptionPane.showConfirmDialog(GlobalState.boardComponent,
+                "Are you sure you want to reset the board?",
+                "Reset Confirmation",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        
+        if (choice == 0)
+        {
+            CellState [][] cellStates = SudokuStateStack.getInstance().getCurrentState().boardState.cellStates;
+        
+            for (int y = 0 ; y < 9 ; ++y)
+                for (int x = 0 ; x < 9 ; ++x)
+                    cellStates[x][y].reset();
+        
+            setCellMode(CellMode.GIVEN);
+            GlobalState.boardComponent.repaint();
+        }
+    }
+    
+    private void handle_invert_selection()
+    {
+        for (int y = 0 ; y < 9 ; ++y)
+            for (int x = 0 ; x < 9 ; ++x)
+                SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[x][y].toggleHighlighted();
+        GlobalState.boardComponent.repaint();
+    }
+    
+    private void handle_cell_mode_button(CellMode newCellMode)
+    {
+        setCellMode(newCellMode);
+    }
+    
+    private void handle_clear_top()
+    {
+        for (int y = 0 ; y < 9 ; ++y)
+        {
+            for (int x = 0 ; x < 9 ; ++x)
+            {
+                CellState cellState = SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[x][y];
+                
+                if (cellState.isHighlighted)
+                    cellState.topNumbers.clear();
+            }
+        }
+        
+        GlobalState.boardComponent.repaint();
+    }
+
+    private void handle_clear_bottom()
+    {
+        for (int y = 0 ; y < 9 ; ++y)
+        {
+            for (int x = 0 ; x < 9 ; ++x)
+            {
+                CellState cellState = SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[x][y];
+                
+                if (cellState.isHighlighted)
+                    cellState.bottomNumbers.clear();
+            }
+        }
+        
+        GlobalState.boardComponent.repaint();
+    }
+    
+    private void handle_clear_center()
+    {
+        for (int y = 0 ; y < 9 ; ++y)
+        {
+            for (int x = 0 ; x < 9 ; ++x)
+            {
+                CellState cellState = SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[x][y];
+                
+                if (cellState.isHighlighted)
+                    if (!cellState.isGiven)
+                        cellState.centerNumber = 0;
+            }
+        }
+        
+        GlobalState.boardComponent.repaint();
+    }
+
+    private void handle_clear_all()
+    {
+        for (int y = 0 ; y < 9 ; ++y)
+        {
+            for (int x = 0 ; x < 9 ; ++x)
+            {
+                CellState cellState = SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[x][y];
+                
+                if (cellState.isHighlighted)
+                {
+                    cellState.topNumbers.clear();
+                    cellState.bottomNumbers.clear();
+                    
+                    if (!cellState.isGiven)
+                        cellState.centerNumber = 0;
+                }
+            }
+        }
+        
+        GlobalState.boardComponent.repaint();
+    }
+
+    private void handle_clear_top_bottom()
+    {
+        for (int y = 0 ; y < 9 ; ++y)
+        {
+            for (int x = 0 ; x < 9 ; ++x)
+            {
+                CellState cellState = SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[x][y];
+                
+                if (cellState.isHighlighted)
+                {
+                    cellState.topNumbers.clear();
+                    cellState.bottomNumbers.clear();                    
+                }
+            }
+        }
+        
+        GlobalState.boardComponent.repaint();
+    }
+
+    private void handle_check_board()
+    {
+        boolean win = SudokuChecker.checkBoard(GlobalState.cells,
+                m_ChkKnightConstraint.isSelected(),
+                m_ChkKingConstraint.isSelected());
+
+        if (win)
+            JOptionPane.showMessageDialog(GlobalState.boardComponent,
+                    "The Sudoku Board appears to be CORRECT!",
+                    "Winner",
+                    JOptionPane.INFORMATION_MESSAGE);
+        else
+            JOptionPane.showMessageDialog(GlobalState.boardComponent,
+                    "There seems to be a problem with your solution...",
+                    "Error",
+                    JOptionPane.WARNING_MESSAGE);
+    }
+    
+    private void handle_move_key(char c)
     {
         Point p = new Point(GlobalState.lastHighlightedCell);
         
@@ -160,10 +443,10 @@ public class SudokuControlComponent extends JComponent implements ActionListener
             GlobalState.lastHighlightedCell = p;
             SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[p.x][p.y].setHighlighted(true);
             GlobalState.boardComponent.repaint();
-        }    
+        }
     }
     
-    private void moveAndSelectKeyPressed(char c)
+    private void handle_move_and_select_key(char c)
     {
         Point p = new Point(GlobalState.lastHighlightedCell);
         
@@ -183,180 +466,84 @@ public class SudokuControlComponent extends JComponent implements ActionListener
             GlobalState.boardComponent.repaint();
         }    
     }
-    
-    @Override
-    public void actionPerformed(ActionEvent event)
+
+    private void handle_ctrl_and_number_key(int n)
     {
-        if (event.getSource() == m_BtnAbout)
-            GlobalState.fireEventAboutButton();
-        else if (event.getSource() == m_BtnImport)
-            GlobalState.fireEventImportButton();
-        else if (event.getSource() == m_BtnReset)
-            GlobalState.fireEventResetButton();
-        else if (event.getSource() == m_BtnModeGiven)
-            GlobalState.fireEventCellModeButton(CellMode.GIVEN);
-        else if (event.getSource() == m_BtnModeTop)
-            GlobalState.fireEventCellModeButton(CellMode.TOP);
-        else if (event.getSource() == m_BtnModeBottom)
-            GlobalState.fireEventCellModeButton(CellMode.BOTTOM);
-        else if (event.getSource() == m_BtnModeCenter)
-            GlobalState.fireEventCellModeButton(CellMode.CENTER);
-        else if (event.getSource() == m_BtnClearTop)
-            GlobalState.fireEventClearTopButton();
-        else if (event.getSource() == m_BtnClearBottom)
-            GlobalState.fireEventClearBottomButton();
-        else if (event.getSource() == m_BtnClearCenter)
-            GlobalState.fireEventClearCenterButton();
-        else if (event.getSource() == m_BtnClearAll)
-            GlobalState.fireEventClearAllButton();
-        else if (event.getSource() == m_BtnClearTopBottom)
-            GlobalState.fireEventClearTopBottomButton();
-        else if (event.getSource() == m_BtnCheckBoard)
-            GlobalState.fireEventCheckBoardButton();
+        for (int yPos = 0 ; yPos < 9 ; ++yPos)
+        {
+            for (int xPos = 0 ; xPos < 9 ; ++xPos)
+            {
+                CellState cellState = SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[xPos][yPos];
+                
+                boolean highlight = false;
+                
+                if (cellState.centerNumber != 0)
+                    highlight = true;
+                
+                for (int i = 0 ; i < 9 ; ++i)
+                {
+                    if (SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[xPos][i].centerNumber == n)
+                        highlight = true;
+                    if (SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[i][yPos].centerNumber == n)
+                        highlight = true;
+                }
+                
+                int boxStartX = (xPos / 3) * 3;
+                int boxStartY = (yPos / 3) * 3;
+                
+                for (int x = boxStartX ; x < boxStartX + 3 ; ++x)
+                    for (int y = boxStartY ; y < boxStartY + 3 ; ++y)
+                        if (SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[x][y].centerNumber == n)
+                            highlight = true;
+                
+                cellState.setHighlighted(highlight);
+                repaint();
+
+            }
+        }
         
-        GlobalState.fireEventRepaintRequest();
-    }
-
-    @Override
-    public void handleEventAboutButton()
-    {
+        GlobalState.boardComponent.repaint();
     }
     
-    @Override
-    public void handleEventImportButton()
-    {
-        setCellMode(CellMode.CENTER);
-    }
-
-    @Override
-    public void handleEventReset()
-    {
-        setCellMode(CellMode.GIVEN);
-    }
-    
-    @Override
-    public void handleEventResetButton()
-    {
-    }
-
-    @Override
-    public void handleEventCellModeButton(CellMode newCellMode)
-    {
-        setCellMode(newCellMode);
-    }
-
-    @Override
-    public void handleEventClearTopButton()
-    {
-    }
-
-    @Override
-    public void handleEventClearBottomButton()
-    {
-    }
-
-    @Override
-    public void handleEventClearCenterButton()
-    {
-    }
-
-    @Override
-    public void handleEventClearAllButton()
-    {
-    }
-
-    @Override
-    public void handleEventClearTopBottomButton()
-    {
-    }
-
-    @Override
-    public void handleEventCheckBoardButton()
-    {
-        boolean win = SudokuChecker.checkBoard(GlobalState.cells,
-                m_ChkKnightConstraint.isSelected(),
-                m_ChkKingConstraint.isSelected());
-
-        if (win)
-            JOptionPane.showMessageDialog(GlobalState.boardComponent,
-                    "The Sudoku Board appears to be CORRECT!",
-                    "Winner",
-                    JOptionPane.INFORMATION_MESSAGE);
-        else
-            JOptionPane.showMessageDialog(GlobalState.boardComponent,
-                    "There seems to be a problem with your solution...",
-                    "Error",
-                    JOptionPane.WARNING_MESSAGE);
-    }
-
-    @Override
-    public void handleEventControlNumberKeyTyped(int n)
-    {
-    }
-    
-    @Override
-    public void handleEventNumberKeyTyped(int n, boolean forceClear)
-    {
-        if (n == '0')
-            m_BtnClearAll.doClick();
-    }
-
-    @Override
-    public void handleEventLetterKeyTyped(char c)
-    {
-        char ch = Character.toUpperCase(c);
-        
-        if (ch == '?' || ch == '/')
+    private void handle_non_number_key(char c)
+    {       
+        if (c == '?' || c == '/')
             m_BtnAbout.doClick();
         else if (c == 'i')
             m_BtnImport.doClick();
         else if (c == 'I')
-            invertSelection();
-        else if (ch == '~')
+            handle_invert_selection();
+        else if (c == '~')
             m_BtnReset.doClick();
-        else if (ch == 'G')
+        else if (c == 'G' || c == 'g')
             m_BtnModeGiven.doClick();
-        else if (ch == 'T')
+        else if (c == 'T' || c == 't')
             m_BtnModeTop.doClick();
-        else if (ch == 'B')
+        else if (c == 'B' || c == 'b')
             m_BtnModeBottom.doClick();
-        else if (ch == 'E')
+        else if (c == 'E' || c == 'e')
             m_BtnModeCenter.doClick();
-        else if (ch == '[')
+        else if (c == '[')
             m_BtnClearTop.doClick();
-        else if (ch == ']')
+        else if (c == ']')
             m_BtnClearBottom.doClick();
-        else if (ch == ' ')
+        else if (c == ' ')
              m_BtnClearAll.doClick();
-        else if (ch == 'C')
+        else if (c == 'C' || c == 'c')
             m_BtnClearAll.doClick();
-        else if (ch == 'P')
+        else if (c == 'P' || c == 'p')
             m_BtnClearTopBottom.doClick();
-        else if (ch == '=' || ch == '+')
+        else if (c == '=' || c == '+')
             m_BtnCheckBoard.doClick();
-        else if (ch == 'N')
+        else if (c == 'N' || c == 'n')
             m_ChkKnightConstraint.doClick();
-        else if (ch == 'M')
+        else if (c == 'M' || c == 'm')
             m_ChkKingConstraint.doClick();
-        
         else if (c == 'h' || c == 'j' || c == 'k' || c == 'l')
-            moveKeyPressed(c);
+            handle_move_key(c);
         else if (c == 'H' || c == 'J' || c == 'K' || c == 'L')
-            moveAndSelectKeyPressed(c);        
+            handle_move_and_select_key(c);        
     }
 
-    @Override
-    public void handleRepaintRequest()
-    {
-    }
-
-    @Override
-    public void handleImportCellValue(int x, int y, int n)
-    {
-    }
-
-    @Override
-    public void handleHighlightAllCells(boolean highlighted)
-    {        
-    }
+    
 }
