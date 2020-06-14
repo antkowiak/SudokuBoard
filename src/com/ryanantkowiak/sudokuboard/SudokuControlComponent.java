@@ -13,6 +13,9 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
+import com.ryanantkowiak.sudokuboard.sm.CellMode;
+import com.ryanantkowiak.sudokuboard.sm.GlobalState;
+
 public class SudokuControlComponent extends JComponent implements ActionListener, SudokuListener
 {
     private static final long serialVersionUID = 1L;

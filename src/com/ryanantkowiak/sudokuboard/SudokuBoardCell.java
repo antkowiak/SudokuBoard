@@ -14,12 +14,15 @@ import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import com.ryanantkowiak.sudokuboard.sm.CellMode;
+import com.ryanantkowiak.sudokuboard.sm.GlobalState;
+
 public class SudokuBoardCell extends JPanel implements MouseListener, SudokuListener
 {
     private static final long serialVersionUID = 1L;
     
-    private int m_xPos;
-    private int m_yPos;
+    private int m_x;
+    private int m_y;
        
     private static Color GIVEN_COLOR = Color.BLACK;
     private static Color PLAYER_COLOR = Color.BLUE;
@@ -43,8 +46,8 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
     
     public SudokuBoardCell(int x, int y)
     {
-        m_xPos = x;
-        m_yPos = y;
+        m_x = x;
+        m_y = y;
         
         GlobalState.addSudokuListener(this);
         
@@ -88,7 +91,7 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
         else
             setBackground(NOT_HL_BG_COLOR);
         
-        if (m_xPos == GlobalState.lastHighlightedCell.x && m_yPos == GlobalState.lastHighlightedCell.y)
+        if (m_x == GlobalState.lastHighlightedCell.x && m_y == GlobalState.lastHighlightedCell.y)
         {
             g.setColor(LAST_SELECTED_COLOR);
             g.drawRect(0, 0, SudokuWindowDimensions.getCellWidth() - 1, SudokuWindowDimensions.getCellHeight() - 1);
@@ -265,8 +268,8 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
             if (GlobalState.isDragging)
             {
                 setHighlighted(GlobalState.isSelecting);
-                GlobalState.lastHighlightedCell.x = m_xPos;
-                GlobalState.lastHighlightedCell.y = m_yPos;
+                GlobalState.lastHighlightedCell.x = m_x;
+                GlobalState.lastHighlightedCell.y = m_y;
                 GlobalState.boardComponent.repaint();
             }
     }
@@ -297,8 +300,8 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
             setHighlighted(true);
         }
         
-        GlobalState.lastHighlightedCell.x = m_xPos;
-        GlobalState.lastHighlightedCell.y = m_yPos;
+        GlobalState.lastHighlightedCell.x = m_x;
+        GlobalState.lastHighlightedCell.y = m_y;
         GlobalState.boardComponent.repaint();
     }
 
@@ -405,14 +408,14 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
         
         for (int i = 0 ; i < 9 ; ++i)
         {
-            if (GlobalState.cells[m_xPos][i].getCenterNumber() == n)
+            if (GlobalState.cells[m_x][i].getCenterNumber() == n)
                 highlight = true;
-            if (GlobalState.cells[i][m_yPos].getCenterNumber() == n)
+            if (GlobalState.cells[i][m_y].getCenterNumber() == n)
                 highlight = true;
         }
         
-        int boxStartX = (m_xPos / 3) * 3;
-        int boxStartY = (m_yPos / 3) * 3;
+        int boxStartX = (m_x / 3) * 3;
+        int boxStartY = (m_y / 3) * 3;
         
         for (int x = boxStartX ; x < boxStartX + 3 ; ++x)
             for (int y = boxStartY ; y < boxStartY + 3 ; ++y)
@@ -443,7 +446,7 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
     @Override
     public void handleImportCellValue(int x, int y, int n)
     {
-        if (x == m_xPos && y == m_yPos)
+        if (x == m_x && y == m_y)
             setNumber(CellMode.GIVEN, n, false);
     }
 

@@ -10,6 +10,9 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
+import com.ryanantkowiak.sudokuboard.sm.CellMode;
+import com.ryanantkowiak.sudokuboard.sm.GlobalState;
+
 public class SudokuBoardComponent extends JComponent implements KeyListener, SudokuListener
 {
     

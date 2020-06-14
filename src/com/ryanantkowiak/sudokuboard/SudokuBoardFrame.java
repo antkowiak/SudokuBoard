@@ -7,6 +7,8 @@ import java.awt.HeadlessException;
 
 import javax.swing.JFrame;
 
+import com.ryanantkowiak.sudokuboard.sm.GlobalState;
+
 public class SudokuBoardFrame extends JFrame
 {
     private static final long serialVersionUID = 1L;

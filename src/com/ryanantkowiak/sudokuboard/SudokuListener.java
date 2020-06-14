@@ -1,5 +1,7 @@
 package com.ryanantkowiak.sudokuboard;
 
+import com.ryanantkowiak.sudokuboard.sm.CellMode;
+
 public interface SudokuListener
 {
     public abstract void handleEventAboutButton();
