@@ -69,20 +69,22 @@ class CellState
 class BoardState
 {
     // fields
-    public CellState[][] cellStates = new CellState[9][9];
+    public CellState[][] cellStates;
     
     public BoardState()
-    {
-        reset();
-    }
-    
-    public void reset()
     {
         cellStates = new CellState[9][9];
         
         for (int y = 0 ; y < 9 ; ++y)
             for (int x = 0 ; x < 9 ; ++x)
                 cellStates[x][y] = new CellState(x, y);
+    }
+    
+    public void reset()
+    {
+        for (int y = 0 ; y < 9 ; ++y)
+            for (int x = 0 ; x < 9 ; ++x)
+                cellStates[x][y].reset();
     }
     
     @Override
