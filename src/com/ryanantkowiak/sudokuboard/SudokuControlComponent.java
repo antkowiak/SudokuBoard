@@ -140,10 +140,10 @@ public class SudokuControlComponent extends JComponent implements ActionListener
         
         switch(c)
         {
-            case 'h': { p.x--; break;}
-            case 'j': { p.y++; break;}
-            case 'k': { p.y--; break;}
-            case 'l': { p.x++; break;}
+            case 'h': { p.x--; break; }
+            case 'j': { p.y++; break; }
+            case 'k': { p.y--; break; }
+            case 'l': { p.x++; break; }
             default:  { return; }
         }
         
