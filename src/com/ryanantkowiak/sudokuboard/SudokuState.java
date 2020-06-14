@@ -125,7 +125,7 @@ class BoardState
 public class SudokuState
 {
     // fields
-    BoardState boardState;
+    public BoardState boardState;
     
     public SudokuState()
     {
@@ -157,5 +157,4 @@ public class SudokuState
         
         return ss;
     }
-
 }
