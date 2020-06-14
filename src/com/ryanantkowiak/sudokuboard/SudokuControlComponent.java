@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 
 import com.ryanantkowiak.sudokuboard.sm.CellMode;
 import com.ryanantkowiak.sudokuboard.sm.GlobalState;
+import com.ryanantkowiak.sudokuboard.sm.SudokuStateStack;
 
 public class SudokuControlComponent extends JComponent implements ActionListener, SudokuListener
 {
@@ -133,7 +134,7 @@ public class SudokuControlComponent extends JComponent implements ActionListener
     {
         for (int x = 0 ; x < 9 ; ++x)
             for (int y = 0 ; y < 9 ; ++y)
-                GlobalState.cells[x][y].toggleHighlighted(false);
+                SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[x][y].toggleHighlighted();
         repaint();
     }
     
@@ -154,10 +155,10 @@ public class SudokuControlComponent extends JComponent implements ActionListener
         {
             for (int x = 0 ; x < 9 ; ++x)
                 for (int y = 0 ; y < 9 ; ++y)
-                    GlobalState.cells[x][y].setHighlighted(false);
+                    SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[x][y].setHighlighted(false);
             
             GlobalState.lastHighlightedCell = p;
-            GlobalState.cells[p.x][p.y].setHighlighted(true);
+            SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[p.x][p.y].setHighlighted(true);
             GlobalState.boardComponent.repaint();
         }    
     }
@@ -178,7 +179,7 @@ public class SudokuControlComponent extends JComponent implements ActionListener
         if (p.x >= 0 && p.x < 9 && p.y >= 0 && p.y < 9)
         {            
             GlobalState.lastHighlightedCell = p;
-            GlobalState.cells[p.x][p.y].setHighlighted(true);
+            SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[p.x][p.y].setHighlighted(true);
             GlobalState.boardComponent.repaint();
         }    
     }

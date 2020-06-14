@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.ryanantkowiak.sudokuboard.sm.SudokuStateStack;
+
 public class SudokuChecker
 {
 
@@ -55,7 +57,7 @@ public class SudokuChecker
             List<Integer> numbers = new ArrayList<Integer>(NUMBERS);
             
             for (int y = 0 ; y < 9 ; ++y)
-                numbers.remove(new Integer(cells[x][y].getCenterNumber()));
+                numbers.remove(new Integer(SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[x][y].centerNumber));
             
             if (!numbers.isEmpty())
                 return false;
@@ -72,7 +74,7 @@ public class SudokuChecker
             List<Integer> numbers = new ArrayList<Integer>(NUMBERS);
             
             for (int x = 0 ; x < 9 ; ++x)
-                numbers.remove(new Integer(cells[x][y].getCenterNumber()));
+                numbers.remove(new Integer(SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[x][y].centerNumber));
             
             if (!numbers.isEmpty())
                 return false;
@@ -92,7 +94,7 @@ public class SudokuChecker
                 
                 for (int x = boxStartX ; x < boxStartX + 3 ; ++x)
                     for (int y = boxStartY ; y < boxStartY + 3 ; ++y)
-                        numbers.remove(new Integer(cells[x][y].getCenterNumber()));
+                        numbers.remove(new Integer(SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[x][y].centerNumber));
                 
                 if (!numbers.isEmpty())
                     return false;
@@ -116,7 +118,8 @@ public class SudokuChecker
                     
                     if (isValidCell(checkX, checkY))
                     {
-                        if (cells[x][y].getCenterNumber() == cells[checkX][checkY].getCenterNumber())
+                        if (SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[x][y].centerNumber == 
+                                SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[checkX][checkY].centerNumber)
                             return false;
                     }
                 }
@@ -140,7 +143,8 @@ public class SudokuChecker
                     
                     if (isValidCell(checkX, checkY))
                     {
-                        if (cells[x][y].getCenterNumber() == cells[checkX][checkY].getCenterNumber())
+                        if (SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[x][y].centerNumber ==
+                                SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[checkX][checkY].centerNumber)
                             return false;
                     }
                 }

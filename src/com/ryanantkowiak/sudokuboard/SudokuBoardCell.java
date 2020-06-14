@@ -7,15 +7,15 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import com.ryanantkowiak.sudokuboard.sm.CellMode;
+import com.ryanantkowiak.sudokuboard.sm.CellState;
 import com.ryanantkowiak.sudokuboard.sm.GlobalState;
+import com.ryanantkowiak.sudokuboard.sm.SudokuStateStack;
 
 public class SudokuBoardCell extends JPanel implements MouseListener, SudokuListener
 {
@@ -37,13 +37,7 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
     private static Color NOT_HL_BG_COLOR = Color.WHITE;
     
     private static Color LAST_SELECTED_COLOR = Color.GRAY;
-    
-    private boolean m_isGiven = false;
-    private boolean m_isHighlighted = false;
-    private int m_centerNumber = 0;
-    private List<Integer> m_topNumbers = new ArrayList<Integer>();
-    private List<Integer> m_bottomNumbers = new ArrayList<Integer>();
-    
+        
     public SudokuBoardCell(int x, int y)
     {
         m_x = x;
@@ -60,23 +54,11 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
         setVisible(true);
     }
     
-    public boolean isHighlightedAndContainsNumber(CellMode mode, int n)
+    private CellState getCellState()
     {
-        if (!m_isHighlighted)
-            return false;
-        
-        if (mode == CellMode.CENTER)
-            return m_centerNumber == n;
-        
-        if (mode == CellMode.TOP)
-            return m_topNumbers.contains(n);
-        
-        if (mode == CellMode.BOTTOM)
-            return m_bottomNumbers.contains(n);
-        
-        return false;
+        return SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[m_x][m_y];
     }
-    
+        
     private static boolean isValidNumber(int n)
     {
         return n > 0 && n < 10;
@@ -86,7 +68,9 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
     {
         super.paintComponent(g);     
         
-        if (m_isHighlighted)
+        CellState cellState = getCellState();
+        
+        if (cellState.isHighlighted)
             setBackground(HL_BG_COLOR);
         else
             setBackground(NOT_HL_BG_COLOR);
@@ -97,29 +81,29 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
             g.drawRect(0, 0, SudokuWindowDimensions.getCellWidth() - 1, SudokuWindowDimensions.getCellHeight() - 1);
         }
         
-        if (m_isGiven && isValidNumber(m_centerNumber))
+        if (cellState.isGiven && isValidNumber(cellState.centerNumber))
         {
             g.setColor(GIVEN_COLOR);
-            drawCenteredString(g, Integer.toString(m_centerNumber), getBounds(), CENTER_FONT);
+            paintCenteredString(g, Integer.toString(cellState.centerNumber), getBounds(), CENTER_FONT);
         }
-        else if (!m_isGiven && isValidNumber(m_centerNumber))
+        else if (!cellState.isGiven && isValidNumber(cellState.centerNumber))
         {
             g.setColor(PLAYER_COLOR);
-            drawCenteredString(g, Integer.toString(m_centerNumber), getBounds(), CENTER_FONT);
+            paintCenteredString(g, Integer.toString(cellState.centerNumber), getBounds(), CENTER_FONT);
         }
         
-        if (!m_isGiven)
+        if (!cellState.isGiven)
         {
-            if (!m_topNumbers.isEmpty())
+            if (!cellState.topNumbers.isEmpty())
             {
                 g.setColor(TOP_COLOR);
-                drawTopString(g, listToString(m_topNumbers), getBounds(), TOP_FONT);
+                paintTopString(g, listToString(cellState.topNumbers), getBounds(), TOP_FONT);
             }
             
-            if (!m_bottomNumbers.isEmpty())
+            if (!cellState.bottomNumbers.isEmpty())
             {
                 g.setColor(BOTTOM_COLOR);
-                drawBottomString(g, listToString(m_bottomNumbers), getBounds(), BOTTOM_FONT);
+                paintBottomString(g, listToString(cellState.bottomNumbers), getBounds(), BOTTOM_FONT);
             }
         }
     }
@@ -134,7 +118,7 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
         return s;
     }
 
-    private static void drawCenteredString(Graphics g, String text, Rectangle rect, Font font)
+    private static void paintCenteredString(Graphics g, String text, Rectangle rect, Font font)
     {
         FontMetrics metrics = g.getFontMetrics(font);
         int x = (rect.width - metrics.stringWidth(text)) / 2;
@@ -143,7 +127,7 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
         g.drawString(text, x, y);
     }
 
-    private static void drawTopString(Graphics g, String text, Rectangle rect, Font font)
+    private static void paintTopString(Graphics g, String text, Rectangle rect, Font font)
     {
         FontMetrics metrics = g.getFontMetrics(font);
         int x = 0;
@@ -152,106 +136,87 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
         g.drawString(text, x, y);
     }
 
-    private static void drawBottomString(Graphics g, String text, Rectangle rect, Font font)
+    private static void paintBottomString(Graphics g, String text, Rectangle rect, Font font)
     {
         int x = 0;
         int y = rect.height - 2;
         g.setFont(font);
         g.drawString(text, x, y);
     }
-
-    public void toggleHighlighted(boolean redraw)
-    {
-        m_isHighlighted = !m_isHighlighted;
-        
-        if (redraw)
-            repaint();
-    }
-    
-    public void setHighlighted(boolean highlighted)
-    {
-        m_isHighlighted = highlighted;
-        repaint();
-    }
-    
-    public int getCenterNumber()
-    {
-        return m_centerNumber;
-    }
-    
+       
     private void setNumber(CellMode mode, int n, boolean forceClear)
     {
+        CellState cellState = getCellState();
+        
         if (mode == CellMode.GIVEN)
         {
             if (n == 0)
             {
-                m_isGiven = false;
-                m_centerNumber = 0;
-                m_topNumbers.clear();
-                m_bottomNumbers.clear();
+                cellState.isGiven = false;
+                cellState.centerNumber = 0;
+                cellState.topNumbers.clear();
+                cellState.bottomNumbers.clear();
             }
             else if (isValidNumber(n))
             {
-                m_isGiven = true;
-                if (m_centerNumber == n)
-                    m_centerNumber = 0;
+                cellState.isGiven = true;
+                if (cellState.centerNumber == n)
+                    cellState.centerNumber = 0;
                 else
-                    m_centerNumber = n;
-                m_topNumbers.clear();
-                m_bottomNumbers.clear();
+                    cellState.centerNumber = n;
+                cellState.topNumbers.clear();
+                cellState.bottomNumbers.clear();
             }
         }
         
-        if (mode == CellMode.TOP && !m_isGiven)
+        if (mode == CellMode.TOP && !cellState.isGiven)
         {
             if (n == 0)
             {
-                m_topNumbers.clear();
+                cellState.topNumbers.clear();
             }
             else if (isValidNumber(n))
             {
-                 if (m_topNumbers.contains(new Integer(n)) || forceClear)
+                 if (cellState.topNumbers.contains(new Integer(n)) || forceClear)
                  {
-                     m_topNumbers.remove(new Integer(n));
+                     cellState.topNumbers.remove(new Integer(n));
                  }
                  else
                  {
-                     m_topNumbers.add(new Integer(n));
-                     Collections.sort(m_topNumbers);
+                     cellState.topNumbers.add(new Integer(n));
                  }
             }
             
             repaint();
         }
         
-        if (mode == CellMode.BOTTOM && !m_isGiven)
+        if (mode == CellMode.BOTTOM && !cellState.isGiven)
         {
             if (n == 0)
             {
-                m_bottomNumbers.clear();
+                cellState.bottomNumbers.clear();
             }
             else if (isValidNumber(n))
             {
-                 if (m_bottomNumbers.contains(new Integer(n)) || forceClear)
+                 if (cellState.bottomNumbers.contains(new Integer(n)) || forceClear)
                  {
-                     m_bottomNumbers.remove(new Integer(n));
+                     cellState.bottomNumbers.remove(new Integer(n));
                  }
                  else
                  {
-                     m_bottomNumbers.add(new Integer(n));
-                     Collections.sort(m_bottomNumbers);
+                     cellState.bottomNumbers.add(new Integer(n));
                  }
             }
         }
         
-        if (mode == CellMode.CENTER && !m_isGiven)
+        if (mode == CellMode.CENTER && !cellState.isGiven)
         {
             if (n == 0 || isValidNumber(n))
             {
-                if (m_centerNumber == n)
-                    m_centerNumber = 0;
+                if (cellState.centerNumber == n)
+                    cellState.centerNumber = 0;
                 else
-                    m_centerNumber = n;
+                    cellState.centerNumber = n;
             }
         }
     }
@@ -267,7 +232,7 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
         if (SwingUtilities.isRightMouseButton(arg0))
             if (GlobalState.isDragging)
             {
-                setHighlighted(GlobalState.isSelecting);
+                getCellState().setHighlighted(GlobalState.isSelecting);
                 GlobalState.lastHighlightedCell.x = m_x;
                 GlobalState.lastHighlightedCell.y = m_y;
                 GlobalState.boardComponent.repaint();
@@ -282,22 +247,24 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
     @Override
     public void mousePressed(MouseEvent arg0)
     {
+        CellState cellState = getCellState();
+        
         if (SwingUtilities.isRightMouseButton(arg0))
         {
             GlobalState.isDragging = true;
-            GlobalState.isSelecting = !m_isHighlighted;
-            toggleHighlighted(true);
+            GlobalState.isSelecting = !cellState.isHighlighted;
+            cellState.toggleHighlighted();
         }
         
         if (SwingUtilities.isLeftMouseButton(arg0))
         {
-            setHighlighted(true);
+            cellState.setHighlighted(true);
             GlobalState.fireEventRepaintRequest();
             GlobalState.isDragging = false;
             GlobalState.isSelecting = false;
             
             GlobalState.fireEventHighlightAllCells(false);
-            setHighlighted(true);
+            cellState.setHighlighted(true);
         }
         
         GlobalState.lastHighlightedCell.x = m_x;
@@ -330,11 +297,13 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
     @Override
     public void handleEventReset()
     {
-        m_isGiven = false;
-        m_isHighlighted = false;
-        m_centerNumber = 0;
-        m_topNumbers.clear();
-        m_bottomNumbers.clear();
+        CellState cellState = getCellState();
+        
+        cellState.isGiven = false;
+        cellState.isHighlighted = false;
+        cellState.centerNumber = 0;
+        cellState.topNumbers.clear();
+        cellState.bottomNumbers.clear();
         repaint();
     }
     
@@ -346,44 +315,54 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
     @Override
     public void handleEventClearTopButton()
     {
-        if (m_isHighlighted)
-            m_topNumbers.clear();
+        CellState cellState = getCellState();
+        
+        if (cellState.isHighlighted)
+            cellState.topNumbers.clear();
     }
 
     @Override
     public void handleEventClearBottomButton()
     {
-        if (m_isHighlighted)
-            m_bottomNumbers.clear();
+        CellState cellState = getCellState();
+        
+        if (cellState.isHighlighted)
+            cellState.bottomNumbers.clear();
     }
 
     @Override
     public void handleEventClearCenterButton()
     {
-        if (m_isHighlighted && !m_isGiven)
-            m_centerNumber = 0;
+        CellState cellState = getCellState();
+        
+        if (cellState.isHighlighted && !cellState.isGiven)
+            cellState.centerNumber = 0;
     }
 
     @Override
     public void handleEventClearAllButton()
     {
-        if (m_isHighlighted)
+        CellState cellState = getCellState();
+        
+        if (cellState.isHighlighted)
         {
-            m_topNumbers.clear();
-            m_bottomNumbers.clear();
+            cellState.topNumbers.clear();
+            cellState.bottomNumbers.clear();
             
-            if (!m_isGiven)
-                m_centerNumber = 0;
+            if (!cellState.isGiven)
+                cellState.centerNumber = 0;
         }
     }
 
     @Override
     public void handleEventClearTopBottomButton()
     {
-        if (m_isHighlighted)
+        CellState cellState = getCellState();
+        
+        if (cellState.isHighlighted)
         {
-            m_topNumbers.clear();
-            m_bottomNumbers.clear();
+            cellState.topNumbers.clear();
+            cellState.bottomNumbers.clear();
         }
     }
 
@@ -395,6 +374,8 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
     @Override
     public void handleEventControlNumberKeyTyped(int n)
     {
+        CellState cellState = getCellState();
+        
         // highlight this cell if any of the following is true:
         // number is set to non zero (any number)
         // 'n' is in the column
@@ -403,14 +384,14 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
         
         boolean highlight = false;
         
-        if (m_centerNumber != 0)
+        if (cellState.centerNumber != 0)
             highlight = true;
         
         for (int i = 0 ; i < 9 ; ++i)
         {
-            if (GlobalState.cells[m_x][i].getCenterNumber() == n)
+            if (SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[m_x][i].centerNumber == n)
                 highlight = true;
-            if (GlobalState.cells[i][m_y].getCenterNumber() == n)
+            if (SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[i][m_y].centerNumber == n)
                 highlight = true;
         }
         
@@ -419,16 +400,19 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
         
         for (int x = boxStartX ; x < boxStartX + 3 ; ++x)
             for (int y = boxStartY ; y < boxStartY + 3 ; ++y)
-                if (GlobalState.cells[x][y].getCenterNumber() == n)
+                if (SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[x][y].centerNumber == n)
                     highlight = true;
         
-        setHighlighted(highlight);
+        cellState.setHighlighted(highlight);
+        repaint();
     }
 
     @Override
     public void handleEventNumberKeyTyped(int n, boolean forceClear)
     {
-        if (m_isHighlighted)
+        CellState cellState = getCellState();
+        
+        if (cellState.isHighlighted)
             setNumber(GlobalState.cellMode, n, forceClear);
     }
 
@@ -453,6 +437,6 @@ public class SudokuBoardCell extends JPanel implements MouseListener, SudokuList
     @Override
     public void handleHighlightAllCells(boolean highlighted)
     {
-        setHighlighted(highlighted);        
+        getCellState().setHighlighted(highlighted);        
     }
 }

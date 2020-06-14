@@ -29,6 +29,33 @@ public class CellState
         bottomNumbers = new SortedArrayList<Integer>();
     }
     
+    public void toggleHighlighted()
+    {
+        isHighlighted = !isHighlighted;
+    }
+    
+    public void setHighlighted(boolean highlighted)
+    {
+        isHighlighted = highlighted;
+    }
+    
+    public boolean isHighlightedAndContainsNumber(CellMode mode, int n)
+    {
+        if (!isHighlighted)
+            return false;
+        
+        if (mode == CellMode.CENTER)
+            return centerNumber == n;
+        
+        if (mode == CellMode.TOP)
+            return topNumbers.contains(n);
+        
+        if (mode == CellMode.BOTTOM)
+            return bottomNumbers.contains(n);
+        
+        return false;
+    }
+    
     @Override
     public boolean equals(Object obj)
     {

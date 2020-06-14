@@ -35,7 +35,7 @@ public class GlobalState
     {
         for (int x = 0 ; x < 9 ; ++x)
             for (int y = 0 ; y < 9 ; ++y)
-                if (cells[x][y].isHighlightedAndContainsNumber(cellMode, n))
+                if (SudokuStateStack.getInstance().getCurrentState().boardState.cellStates[x][y].isHighlightedAndContainsNumber(cellMode, n))
                     return true;
         return false;
     }
