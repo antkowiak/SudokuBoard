@@ -174,7 +174,6 @@ public class SudokuControlComponent extends JComponent implements ActionListener
         if (event.getKeyCode() == KeyEvent.VK_CONTROL)
             GlobalState.isControlKeyPressed = true;            
 
-
         // Don't know why, but for some reason, the '6' isn't returned from getKeyChar
         // when the CTRL button is pressed down. This should work around it...
         if (GlobalState.isControlKeyPressed && event.getKeyCode() == 54)
@@ -242,6 +241,8 @@ public class SudokuControlComponent extends JComponent implements ActionListener
                 
                 if (n >= 0 && n <= 9)
                     input.add(n);
+                else if (c == '.')
+                    input.add(0);
             }
             
             int inputIdx = 0;
@@ -484,8 +485,6 @@ public class SudokuControlComponent extends JComponent implements ActionListener
                             highlight = true;
                 
                 cellState.setHighlighted(highlight);
-                repaint();
-
             }
         }
         
@@ -531,6 +530,4 @@ public class SudokuControlComponent extends JComponent implements ActionListener
         else if (c == 'H' || c == 'J' || c == 'K' || c == 'L')
             handle_move_and_select_key(c);        
     }
-
-    
 }
