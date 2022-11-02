@@ -213,7 +213,7 @@ public class SudokuControlComponent extends JComponent implements ActionListener
     {
         JOptionPane.showMessageDialog(GlobalState.boardComponent,
                 "Written by Ryan Antkowiak" + "\n" +
-                "antkowiak@gmail.com" + "\n" +
+                "" + "\n" +
                 "Version: " + GlobalState.APP_VERSION_NUMBER,
                 "About " + GlobalState.APP_TITLE,
                 JOptionPane.INFORMATION_MESSAGE);
